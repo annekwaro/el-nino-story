@@ -34,7 +34,7 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "el",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
@@ -51,6 +51,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
               }
             ],
             "styles": [

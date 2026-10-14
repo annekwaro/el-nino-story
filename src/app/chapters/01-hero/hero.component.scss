@@ -1,0 +1,102 @@
+:host {
+  display: block;
+}
+
+.hero {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: var(--el-nav-height) var(--el-gutter) var(--el-space-7);
+  text-align: center;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      120% 70% at 50% 110%,
+      color-mix(in srgb, var(--el-water) 16%, var(--el-bg)) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      80% 50% at 85% 0%,
+      color-mix(in srgb, var(--el-accent-warm) 7%, var(--el-bg)) 0%,
+      transparent 70%
+    ),
+    var(--el-bg);
+}
+
+.hero__title {
+  font-size: var(--el-text-display);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.9;
+  animation: rise var(--el-duration-slow) var(--el-ease-out) both;
+}
+
+.hero__subtitle {
+  margin: var(--el-space-4) 0 0;
+  font-size: var(--el-text-lg);
+  color: var(--el-ink-muted);
+  animation: rise var(--el-duration-slow) var(--el-ease-out) 150ms both;
+}
+
+.hero__cue {
+  position: absolute;
+  bottom: var(--el-space-5);
+  left: 50%;
+  translate: -50% 0;
+  display: grid;
+  justify-items: center;
+  gap: var(--el-space-2);
+  text-decoration: none;
+  animation: fade 600ms ease 900ms both;
+}
+
+.hero__cue-line {
+  position: relative;
+  width: 1px;
+  height: 3rem;
+  background: var(--el-rule);
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--el-ink);
+    transform: translateY(-100%);
+    animation: drip 2.2s var(--el-ease-out) 1.2s infinite;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes drip {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Static cue: show the full line instead of the looping drip. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__cue-line::after {
+    animation: none;
+    transform: none;
+    opacity: 0.35;
+  }
+}
