@@ -42,8 +42,6 @@ export class SstMapComponent {
   readonly limit = input(3);
   readonly showNino34Box = input(false);
   readonly caption = input('');
-  /** Just the map: no longitude axis, caption or legend. */
-  readonly bare = input(false);
 
   private readonly host: HTMLElement = inject(ElementRef).nativeElement;
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');

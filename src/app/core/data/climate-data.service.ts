@@ -3,6 +3,7 @@ import {
   ENSO_EPISODES_URL,
   GLOBAL_SST_URL,
   NINO12_INDEX_URL,
+  NINO34_INDEX_URL,
   RAINFALL_URL,
   fetchJson,
   parseEnsoEpisodes,
@@ -17,6 +18,11 @@ import {
  */
 @Injectable({ providedIn: 'root' })
 export class ClimateDataService {
+  readonly nino34 = resource({
+    loader: async ({ abortSignal }) =>
+      parseNino34Index(await fetchJson(NINO34_INDEX_URL, abortSignal), NINO34_INDEX_URL),
+  });
+
   readonly episodes = resource({
     loader: async ({ abortSignal }) =>
       parseEnsoEpisodes(await fetchJson(ENSO_EPISODES_URL, abortSignal), ENSO_EPISODES_URL),

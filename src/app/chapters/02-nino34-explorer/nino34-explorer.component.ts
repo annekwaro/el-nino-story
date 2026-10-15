@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   effect,
+  inject,
   isDevMode,
   resource,
   signal,
@@ -12,10 +13,10 @@ import {
   fetchJson,
   formatAnomaly,
   formatMonth,
-  parseNino34Index,
   parseSstAnomaly,
   sstAnomalyUrl,
 } from '../../core/data/climate-data';
+import { ClimateDataService } from '../../core/data/climate-data.service';
 import { SstMapComponent, SstMapStatus } from '../../shared/sst-map/sst-map.component';
 import { ENSO_EVENTS } from './enso-events';
 import { Nino34ChartComponent } from './nino34-chart/nino34-chart.component';
@@ -38,10 +39,7 @@ export class Nino34ExplorerComponent {
   protected readonly mapUrl = computed(() => sstAnomalyUrl(this.selectedMonth()));
   protected readonly narration = computed(() => this.selectedEvent().caption);
 
-  protected readonly index = resource({
-    loader: async ({ abortSignal }) =>
-      parseNino34Index(await fetchJson(NINO34_INDEX_URL, abortSignal), NINO34_INDEX_URL),
-  });
+  protected readonly index = inject(ClimateDataService).nino34;
 
   protected readonly map = resource({
     request: () => ({ url: this.mapUrl(), month: this.selectedMonth() }),

@@ -1,59 +1,66 @@
-<section class="hero" id="top" aria-labelledby="hero-title">
-  <div class="hero__inner">
+<section
+  class="hero"
+  id="top"
+  aria-labelledby="hero-title"
+  (pointermove)="onPointer($event, chart)"
+  (pointerleave)="hoverIndex.set(null)"
+>
+  <figure class="wave" #chart>
+    @if (count() && size().width > 0) {
+      <svg
+        class="wave__svg"
+        [attr.width]="size().width"
+        [attr.height]="size().height"
+        [attr.viewBox]="'0 0 ' + size().width + ' ' + size().height"
+        role="img"
+        [attr.aria-label]="ariaLabel()"
+      >
+        <defs>
+          <linearGradient id="wave-warm" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" class="stop-warm" />
+            <stop offset="1" class="stop-warm-fade" />
+          </linearGradient>
+          <linearGradient id="wave-cool" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" class="stop-cool-fade" />
+            <stop offset="1" class="stop-cool" />
+          </linearGradient>
+        </defs>
+        <g class="wave__fills">
+          <path class="wave__warm" [attr.d]="paths().warm" />
+          <path class="wave__cool" [attr.d]="paths().cool" />
+        </g>
+        <line class="wave__zero" x1="0" [attr.x2]="size().width" [attr.y1]="paths().zero" [attr.y2]="paths().zero" />
+        <path class="wave__line" pathLength="1" [attr.d]="paths().line" />
+      </svg>
+
+      @for (peak of peaks(); track peak.year) {
+        <span class="wave__peak" [style.left.px]="peak.x" [style.top.px]="peak.y">
+          <span class="wave__label el-num">{{ peak.year }} <b>{{ peak.value }}</b></span>
+        </span>
+      }
+
+      @if (readout(); as r) {
+        <span class="wave__hover" [style.left.px]="r.x">
+          <span class="wave__dot" [class.is-warm]="r.warm" [style.top.px]="r.y"></span>
+          <span class="wave__hover-label el-num" [style.top.px]="r.y">{{ r.text }}</span>
+        </span>
+      }
+    }
+  </figure>
+
+  <div class="hero__title-block">
     <h1 class="hero__title" id="hero-title">El Niño</h1>
     <p class="hero__subtitle">The ocean that rewrites weather.</p>
-
-    <figure class="hero__figure">
-      <div class="hero__maps">
-        @if (frames.value(); as grids) {
-          @for (grid of grids; track grid.month; let i = $index) {
-            <el-sst-map
-              class="hero__map"
-              [class.is-active]="i === active()"
-              [attr.aria-hidden]="i !== active()"
-              [data]="grid"
-              [bare]="true"
-            />
-          }
-        }
-      </div>
-
-      <figcaption class="hero__caption">
-        <div class="hero__frames" role="group" aria-label="Sea-surface temperature, December of">
-          @for (label of labels(); track label.month; let i = $index) {
-            <button
-              type="button"
-              class="hero__frame"
-              [class.hero__frame--warm]="label.warm"
-              [class.hero__frame--cool]="label.cool"
-              [attr.aria-pressed]="i === active()"
-              (click)="show(i)"
-            >
-              <span class="hero__frame-month el-num">{{ label.month }}</span>
-              <span class="hero__frame-phase">{{ label.phase }}</span>
-            </button>
-          }
-        </div>
-
-        <div class="hero__meta">
-          @if (!reduced()) {
-            <button type="button" class="hero__play" (click)="playing.set(!playing())">
-              {{ playing() ? 'Pause' : 'Play' }}
-            </button>
-          }
-          <span class="hero__legend">
-            <span class="el-num">−3</span>
-            <span class="hero__ramp" aria-hidden="true"></span>
-            <span class="el-num">+3 °C</span>
-          </span>
-          <span class="hero__source">Sea-surface temperature vs 1991–2020 · NOAA ERSST v5</span>
-        </div>
-      </figcaption>
-    </figure>
   </div>
 
-  <a class="hero__cue" href="#chapter-02">
-    <span class="hero__cue-label el-kicker">Scroll</span>
-    <span class="hero__cue-line" aria-hidden="true"></span>
-  </a>
+  <a class="hero__cue el-kicker" href="#chapter-02">Begin ↓</a>
+
+  @if (count()) {
+    <p class="hero__caption">
+      Niño 3.4 sea temperature vs normal · <i class="warm">warm</i> El Niño above,
+      <i class="cool">cool</i> La Niña below
+    </p>
+    <span class="hero__axis hero__axis--start el-num" aria-hidden="true">{{ span()[0] }}</span>
+    <span class="hero__axis hero__axis--end el-num" aria-hidden="true">{{ span()[1] }}</span>
+  }
 </section>

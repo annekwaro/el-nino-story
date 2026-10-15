@@ -1,202 +1,236 @@
 :host {
   display: block;
+
+  /* Entrance timeline: title, then line, then fills, then labels (~3.5 s). */
+  --t-line: 300ms;
+  --t-fills: 2100ms;
+  --t-labels: 2700ms;
 }
 
 .hero {
   position: relative;
-  display: grid;
-  place-items: center;
   min-height: 100vh;
   min-height: 100svh;
-  padding: var(--el-nav-height) var(--el-gutter) var(--el-space-7);
-  text-align: center;
   overflow: hidden;
-  background:
-    radial-gradient(
-      120% 70% at 50% 110%,
-      color-mix(in srgb, var(--el-water) 16%, var(--el-bg)) 0%,
-      transparent 60%
-    ),
-    radial-gradient(
-      80% 50% at 85% 0%,
-      color-mix(in srgb, var(--el-accent-warm) 7%, var(--el-bg)) 0%,
-      transparent 70%
-    ),
-    var(--el-bg);
+  background: var(--el-bg);
+  cursor: crosshair;
+}
+
+/* ---------- Chart: the whole screen, 2% past each side ---------- */
+
+.wave {
+  position: absolute;
+  inset: 0 -2%;
+  margin: 0;
+}
+
+.wave__svg {
+  display: block;
+  overflow: visible;
+}
+
+.stop-warm {
+  stop-color: var(--el-accent-warm);
+  stop-opacity: 0.55;
+}
+
+.stop-warm-fade {
+  stop-color: var(--el-accent-warm);
+  stop-opacity: 0.08;
+}
+
+.stop-cool {
+  stop-color: var(--el-accent-cool);
+  stop-opacity: 0.5;
+}
+
+.stop-cool-fade {
+  stop-color: var(--el-water);
+  stop-opacity: 0.08;
+}
+
+.wave__warm {
+  fill: url(#wave-warm);
+}
+
+.wave__cool {
+  fill: url(#wave-cool);
+}
+
+.wave__fills {
+  animation: fade 600ms ease var(--t-fills) both;
+}
+
+.wave__zero {
+  stroke: var(--el-ink);
+  stroke-opacity: 0.2;
+  stroke-dasharray: 3 4;
+}
+
+/* pathLength=1, so a dash of 1 is the whole line. */
+.wave__line {
+  fill: none;
+  stroke: var(--el-ink);
+  stroke-width: 1.5;
+  stroke-dasharray: 1;
+  animation: draw 1800ms var(--el-ease-out) var(--t-line) both;
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* The peaks reach the top of the screen, so each label hangs below on a dotted leader. */
+.wave__peak {
+  position: absolute;
+  display: grid;
+  justify-items: start;
+  margin-top: 6px;
+  pointer-events: none;
+  animation: fade 400ms ease var(--t-labels) both;
+
+  &::before {
+    content: '';
+    height: 3rem;
+    border-left: 1px dotted var(--el-ink);
+  }
+
+  .wave:has(.wave__hover) & {
+    opacity: 0;
+  }
+}
+
+.wave__label {
+  translate: -0.75rem 0;
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  background: var(--el-bg);
+  font-size: var(--el-text-xs);
+  color: var(--el-ink-muted);
+  white-space: nowrap;
+
+  b {
+    font-weight: 600;
+    color: var(--el-accent-warm);
+  }
+}
+
+.wave__hover {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed color-mix(in srgb, var(--el-ink) 35%, transparent);
+  pointer-events: none;
+}
+
+.wave__dot {
+  position: absolute;
+  left: -5px;
+  width: 9px;
+  height: 9px;
+  margin-top: -4.5px;
+  border: 2px solid var(--el-bg);
+  border-radius: 50%;
+  background: var(--el-accent-cool);
+
+  &.is-warm {
+    background: var(--el-accent-warm);
+  }
+}
+
+.wave__hover-label {
+  position: absolute;
+  translate: -50% -180%;
+  font-size: var(--el-text-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---------- Type, set into the chart ---------- */
+
+.hero__title-block,
+.hero__cue,
+.hero__caption,
+.hero__axis {
+  position: absolute;
+  z-index: 1;
+}
+
+.hero__title-block {
+  top: calc(var(--el-nav-height) + var(--el-space-5));
+  left: var(--el-gutter);
+  max-width: 50%;
+  /* A halo in the page colour keeps the type legible where the line crosses it. */
+  text-shadow:
+    0 0 4px var(--el-bg),
+    0 0 14px var(--el-bg);
+  animation: rise 300ms var(--el-ease-out) both;
 }
 
 .hero__title {
-  font-size: var(--el-text-display);
-  font-weight: 600;
-  letter-spacing: -0.045em;
+  font-size: clamp(2.5rem, 1rem + 5vw, 5.5rem);
+  letter-spacing: -0.04em;
   line-height: 0.9;
-  animation: rise var(--el-duration-slow) var(--el-ease-out) both;
 }
 
 .hero__subtitle {
-  margin: var(--el-space-4) 0 0;
-  font-size: var(--el-text-lg);
+  margin: var(--el-space-2) 0 0;
+  font-size: var(--el-text-base);
   color: var(--el-ink-muted);
-  animation: rise var(--el-duration-slow) var(--el-ease-out) 150ms both;
 }
 
-/* ---------- SST frames ---------- */
-
-.hero__figure {
-  width: min(100%, 48rem);
-  margin: var(--el-space-5) auto 0;
-  animation: fade var(--el-duration-slow) ease 400ms both;
-}
-
-/* Frames stack in one cell and crossfade. */
-.hero__maps {
-  display: grid;
-  aspect-ratio: 170 / 60;
-  border-radius: 3px;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--el-accent-neutral) 12%, var(--el-bg));
-  box-shadow:
-    0 1px 0 var(--el-rule),
-    0 24px 48px -32px color-mix(in srgb, var(--el-accent-cool) 45%, transparent);
-}
-
-.hero__map {
-  grid-area: 1 / 1;
-  opacity: 0;
-  transition: opacity 1.2s var(--el-ease-out);
-
-  &.is-active {
-    opacity: 1;
-  }
-}
-
+.hero__cue,
 .hero__caption {
-  margin-top: var(--el-space-3);
-}
-
-.hero__frames {
-  display: flex;
-  justify-content: center;
-  gap: var(--el-space-2);
-}
-
-.hero__frame {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-  padding: var(--el-space-2) var(--el-space-3);
-  border: 0;
-  border-top: 2px solid var(--el-rule);
-  background: transparent;
-  color: var(--el-ink-muted);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    border-color var(--el-duration-base) var(--el-ease-out),
-    color var(--el-duration-base) var(--el-ease-out);
-
-  &:hover {
-    color: var(--el-ink);
-  }
-
-  &[aria-pressed='true'] {
-    border-top-color: var(--el-ink);
-    color: var(--el-ink);
-  }
-
-  &--warm[aria-pressed='true'] {
-    border-top-color: var(--el-accent-warm);
-  }
-
-  &--cool[aria-pressed='true'] {
-    border-top-color: var(--el-accent-cool);
-  }
-}
-
-.hero__frame-month {
-  font-size: var(--el-text-xs);
-}
-
-.hero__frame-phase {
-  font-family: var(--el-font-display);
-  font-size: var(--el-text-sm);
-  font-weight: 600;
-
-  &::first-letter {
-    text-transform: uppercase;
-  }
-}
-
-.hero__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--el-space-2) var(--el-space-4);
-  margin-top: var(--el-space-2);
-  font-size: var(--el-text-xs);
-  color: var(--el-ink-muted);
-}
-
-.hero__play {
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--el-ink);
-  font: inherit;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-  cursor: pointer;
-}
-
-.hero__legend {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--el-space-2);
-}
-
-.hero__ramp {
-  width: 5rem;
-  height: 0.4rem;
-  border-radius: 1px;
-  background: linear-gradient(to right, var(--el-accent-cool), var(--el-bg), var(--el-accent-warm));
-  box-shadow: inset 0 0 0 1px var(--el-rule);
-}
-
-@media (max-width: 479.98px) {
-  .hero__source {
-    flex-basis: 100%;
-  }
+  bottom: calc(var(--el-space-3) + 1.5rem);
+  animation: fade 400ms ease var(--t-labels) both;
 }
 
 .hero__cue {
-  position: absolute;
-  bottom: var(--el-space-5);
-  left: 50%;
-  translate: -50% 0;
-  display: grid;
-  justify-items: center;
-  gap: var(--el-space-2);
+  left: var(--el-gutter);
+  letter-spacing: 0.2em;
   text-decoration: none;
-  animation: fade 600ms ease 900ms both;
 }
 
-.hero__cue-line {
-  position: relative;
-  width: 1px;
-  height: 3rem;
-  background: var(--el-rule);
-  overflow: hidden;
+.hero__caption {
+  right: var(--el-gutter);
+  max-width: min(22rem, 55%);
+  margin: 0;
+  font-size: 0.6875rem;
+  text-align: right;
+  color: var(--el-ink-muted);
 
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--el-ink);
-    transform: translateY(-100%);
-    animation: drip 2.2s var(--el-ease-out) 1.2s infinite;
+  i {
+    font-style: normal;
+    font-weight: 600;
   }
+
+  .warm {
+    color: var(--el-accent-warm);
+  }
+
+  .cool {
+    color: var(--el-accent-cool);
+  }
+}
+
+.hero__axis {
+  bottom: var(--el-space-3);
+  font-size: var(--el-text-xs);
+  color: var(--el-ink-muted);
+  animation: fade 400ms ease var(--t-labels) both;
+}
+
+.hero__axis--start {
+  left: var(--el-gutter);
+}
+
+.hero__axis--end {
+  right: var(--el-gutter);
 }
 
 @keyframes rise {
@@ -212,26 +246,21 @@
   }
 }
 
-@keyframes drip {
-  0% {
-    transform: translateY(-100%);
-  }
-  60%,
-  100% {
-    transform: translateY(100%);
+@media (max-width: 599.98px) {
+  .wave__label b {
+    display: none;
   }
 }
 
-/* Static cue: show the full line instead of the looping drip. */
+/* Final state immediately. */
 @media (prefers-reduced-motion: reduce) {
-  .hero__cue-line::after {
+  .hero__title-block,
+  .wave__line,
+  .wave__fills,
+  .wave__peak,
+  .hero__cue,
+  .hero__caption,
+  .hero__axis {
     animation: none;
-    transform: none;
-    opacity: 0.35;
-  }
-
-  .hero__map,
-  .hero__frame {
-    transition: none;
   }
 }
