@@ -21,7 +21,7 @@ export interface Nino34IndexFile {
   baseline: string;
   /**
    * One entry per calendar month, ascending, with no gaps and no duplicates.
-   * Expected span: 1950-01 through 2024-12 (900 entries).
+   * Span: 1950-01 through OBSERVED_THROUGH in scripts/preprocess.py (currently 2025-09, 909 entries).
    */
   months: Nino34Month[];
 }
