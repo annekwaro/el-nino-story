@@ -1,0 +1,94 @@
+:host {
+  display: block;
+  min-width: 0;
+
+  --wet: var(--el-water);
+  --dry: color-mix(in srgb, var(--el-accent-warm) 55%, var(--el-ink-muted));
+}
+
+.map {
+  display: block;
+  overflow: visible;
+}
+
+.sphere {
+  fill: color-mix(in srgb, var(--el-water) 9%, var(--el-bg));
+  stroke: var(--el-rule);
+}
+
+.land {
+  fill: color-mix(in srgb, var(--el-accent-neutral) 38%, var(--el-bg));
+}
+
+/* Rainfall: filled. Temperature: dashed outline over a faint wash. */
+.region {
+  stroke-width: 1.5;
+  transition:
+    fill var(--el-duration-base) var(--el-ease-out),
+    fill-opacity var(--el-duration-base) var(--el-ease-out),
+    stroke var(--el-duration-base) var(--el-ease-out);
+}
+
+.region--wetter {
+  fill: var(--wet);
+  fill-opacity: 0.6;
+  stroke: var(--wet);
+}
+
+.region--drier {
+  fill: var(--dry);
+  fill-opacity: 0.6;
+  stroke: var(--dry);
+}
+
+.region--warmer {
+  fill: var(--el-accent-warm);
+  fill-opacity: 0.1;
+  stroke: var(--el-accent-warm);
+  stroke-dasharray: 4 3;
+}
+
+.region--cooler {
+  fill: var(--el-accent-cool);
+  fill-opacity: 0.1;
+  stroke: var(--el-accent-cool);
+  stroke-dasharray: 4 3;
+}
+
+.box {
+  fill: none;
+  stroke: var(--el-ink);
+  stroke-width: 1.25;
+}
+
+.box-label {
+  font-family: var(--el-font-display);
+  font-size: var(--el-text-xs);
+  font-weight: 600;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.1em;
+  fill: var(--el-ink);
+}
+
+.marker circle {
+  fill: var(--el-ink);
+  stroke: var(--el-bg);
+  stroke-width: 1.5;
+}
+
+.marker text {
+  font-family: var(--el-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--el-bg);
+
+  .is-compact & {
+    font-size: 8.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .region {
+    transition: none;
+  }
+}

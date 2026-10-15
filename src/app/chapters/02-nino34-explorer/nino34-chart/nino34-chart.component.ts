@@ -1,15 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  ElementRef,
-  afterNextRender,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { path, scaleLinear, scaleTime, timeYear } from 'd3';
 import {
   MonthKey,
@@ -19,6 +8,7 @@ import {
   monthToDate,
   nextMonth,
 } from '../../../core/data/climate-data';
+import { injectElementWidth } from '../../../core/dom/element-width';
 import { EnsoEvent } from '../enso-events';
 
 const MARGIN = { top: 40, right: 8, bottom: 28, left: 40 };
@@ -42,7 +32,7 @@ export class Nino34ChartComponent {
   readonly eventSelect = output<number>();
 
   protected readonly margin = MARGIN;
-  protected readonly width = signal(0);
+  protected readonly width = injectElementWidth();
   protected readonly height = computed(() => (this.width() < 560 ? 200 : 260));
   protected readonly hovered = signal<number | null>(null);
 
@@ -123,18 +113,6 @@ export class Nino34ChartComponent {
       `below zero cooler. Selected: ${formatMonth(this.selectedMonth())}.`
     );
   });
-
-  constructor() {
-    const host: HTMLElement = inject(ElementRef).nativeElement;
-    const destroyRef = inject(DestroyRef);
-
-    afterNextRender(() => {
-      this.width.set(host.clientWidth);
-      const observer = new ResizeObserver(([entry]) => this.width.set(Math.floor(entry.contentRect.width)));
-      observer.observe(host);
-      destroyRef.onDestroy(() => observer.disconnect());
-    });
-  }
 
   /** Centre of a month's bar. */
   private monthX(month: MonthKey): number {

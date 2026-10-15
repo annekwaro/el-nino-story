@@ -1,0 +1,30 @@
+<svg
+  class="map"
+  [class.is-compact]="compact()"
+  [attr.width]="width()"
+  [attr.height]="height()"
+  [attr.viewBox]="'0 0 ' + width() + ' ' + height()"
+  role="img"
+  [attr.aria-label]="label()"
+>
+  @if (width() > 0) {
+    <path class="sphere" [attr.d]="sphere()" />
+    <path class="land" [attr.d]="land()" />
+
+    @for (region of regions(); track region.id) {
+      <path [attr.class]="'region region--' + region.effect" [attr.d]="region.d" />
+    }
+
+    <path class="box" [attr.d]="box()" />
+    <text class="box-label" [attr.x]="boxLabel()[0]" [attr.y]="boxLabel()[1]" text-anchor="middle">
+      Niño 3.4
+    </text>
+
+    @for (region of regions(); track region.id) {
+      <g class="marker" [attr.transform]="'translate(' + region.x + ' ' + region.y + ')'">
+        <circle [attr.r]="compact() ? 6.5 : 9" />
+        <text dy="0.35em" text-anchor="middle">{{ region.number }}</text>
+      </g>
+    }
+  }
+</svg>

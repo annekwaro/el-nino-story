@@ -1,0 +1,58 @@
+<section class="chapter" id="chapter-04" aria-labelledby="chapter-04-title">
+  <header class="chapter__intro">
+    <p class="el-kicker"><span class="el-num">04</span> / Teleconnections</p>
+    <h2 class="chapter__title" id="chapter-04-title">Ripples across the globe</h2>
+    <p class="chapter__dek">
+      When the warm water moves, so do the storms above it, and the atmosphere carries the change
+      around the world. The same regions feel it, event after event.
+    </p>
+  </header>
+
+  <div class="controls">
+    <div class="toggle" role="group" aria-label="Show impacts of">
+      @for (option of phases; track option) {
+        <button
+          type="button"
+          class="toggle__option"
+          [class.toggle__option--warm]="option === 'el-nino'"
+          [class.toggle__option--cool]="option === 'la-nina'"
+          [attr.aria-pressed]="phase() === option"
+          (click)="phase.set(option)"
+        >
+          {{ phaseName[option] }}
+        </button>
+      }
+    </div>
+    <p class="controls__season el-kicker">Typical impacts · December–February</p>
+  </div>
+
+  <figure class="figure">
+    <el-teleconnection-map [impacts]="impacts()" [label]="mapLabel()" />
+
+    <figcaption class="legend" aria-hidden="true">
+      <span class="legend__item"><span class="swatch swatch--wetter"></span>Wetter</span>
+      <span class="legend__item"><span class="swatch swatch--drier"></span>Drier</span>
+      <span class="legend__item"><span class="swatch swatch--warmer"></span>Warmer</span>
+      <span class="legend__item"><span class="swatch swatch--cooler"></span>Cooler</span>
+    </figcaption>
+  </figure>
+
+  <ol class="impacts" aria-live="polite">
+    @for (item of items(); track item.region; let i = $index) {
+      <li class="impact">
+        <span class="impact__number el-num" aria-hidden="true">{{ i + 1 }}</span>
+        <div>
+          <h3 class="impact__name">
+            {{ item.name }}
+            <span [attr.class]="'impact__effect impact__effect--' + item.effect">{{
+              effectLabel[item.effect]
+            }}</span>
+          </h3>
+          <p class="impact__text">{{ item.text }}</p>
+        </div>
+      </li>
+    }
+  </ol>
+
+  <p class="source">Simplified from NOAA Climate Prediction Center ENSO impact maps.</p>
+</section>
