@@ -1,0 +1,33 @@
+<section class="chapter" id="chapter-03" aria-labelledby="chapter-03-title">
+  <header class="chapter__intro">
+    <p class="el-kicker"><span class="el-num">03</span> / Eight events</p>
+    <h2 class="chapter__title" id="chapter-03-title">The Years That Changed Everything</h2>
+    <p class="chapter__dek">
+      Four decades of the Pacific swinging between warm and cool, and what each swing left behind.
+    </p>
+  </header>
+
+  <ol class="timeline">
+    @for (row of rows; track row.event.years; let i = $index) {
+      <li
+        #item
+        class="row"
+        [class.row--left]="i % 2 === 0"
+        [class.row--right]="i % 2 === 1"
+        [class.is-revealed]="revealed().has(i)"
+        [style.--phase]="row.color"
+        [style.--prev]="row.prev"
+        [style.--next]="row.next"
+      >
+        <span class="row__spine" aria-hidden="true"></span>
+        <span class="row__year el-num">{{ row.event.years }}</span>
+
+        <article class="card">
+          <p class="card__tag">{{ row.event.phase === 'el-nino' ? 'El Niño' : 'La Niña' }}</p>
+          <h3 class="card__title">{{ row.event.title }}</h3>
+          <p class="card__text">{{ row.event.text }}</p>
+        </article>
+      </li>
+    }
+  </ol>
+</section>

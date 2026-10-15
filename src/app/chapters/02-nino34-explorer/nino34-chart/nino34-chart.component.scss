@@ -1,0 +1,93 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.chart {
+  overflow: visible;
+}
+
+.grid {
+  stroke: var(--el-rule);
+  stroke-width: 1;
+}
+
+.grid--zero {
+  stroke: var(--el-ink);
+  opacity: 0.5;
+}
+
+.tick {
+  stroke: var(--el-ink-muted);
+}
+
+.axis-label {
+  font-family: var(--el-font-mono);
+  font-size: var(--el-text-xs);
+  fill: var(--el-ink-muted);
+}
+
+.bars--warm {
+  fill: var(--el-accent-warm);
+}
+
+.bars--cool {
+  fill: var(--el-accent-cool);
+}
+
+.selection {
+  transition: transform var(--el-duration-base) var(--el-ease-out);
+}
+
+.selection__line {
+  stroke: var(--el-ink);
+  stroke-width: 1.5;
+}
+
+.marker {
+  cursor: pointer;
+}
+
+.marker__hit {
+  fill: transparent;
+}
+
+.marker__shape {
+  stroke: var(--el-bg);
+  stroke-width: 1;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition: transform var(--el-duration-fast) var(--el-ease-out);
+}
+
+.marker--warm .marker__shape {
+  fill: var(--el-accent-warm);
+}
+
+.marker--cool .marker__shape {
+  fill: var(--el-accent-cool);
+}
+
+.marker:hover .marker__shape,
+.marker.is-selected .marker__shape {
+  transform: scale(1.5);
+}
+
+.marker.is-selected .marker__shape {
+  fill: var(--el-ink);
+}
+
+.tooltip {
+  font-family: var(--el-font-body);
+  font-size: var(--el-text-xs);
+  font-weight: 600;
+  fill: var(--el-ink);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selection,
+  .marker__shape {
+    transition: none;
+  }
+}

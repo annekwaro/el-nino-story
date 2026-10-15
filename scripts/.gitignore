@@ -1,0 +1,5 @@
+# Source NetCDF downloads: large, and fetched on demand with --download.
+data/
+# Local virtualenv
+.venv/
+__pycache__/

@@ -1,0 +1,57 @@
+<figure class="map">
+  <div
+    class="map__frame"
+    [style.aspect-ratio]="aspectRatio()"
+    [class.is-loading]="status() === 'loading'"
+    [class.is-empty]="showPlaceholder()"
+  >
+    <canvas #canvas class="map__canvas" aria-hidden="true"></canvas>
+
+    @if (extent(); as e) {
+      <svg class="map__overlay" [attr.viewBox]="viewBox()" preserveAspectRatio="none" aria-hidden="true">
+        @if (equator()) {
+          <line class="map__equator" [attr.x1]="e.west" [attr.x2]="e.east" y1="0" y2="0" />
+        }
+        @if (nino34Box(); as b) {
+          <rect
+            class="map__box"
+            [attr.x]="b.west"
+            [attr.y]="-b.north"
+            [attr.width]="b.east - b.west"
+            [attr.height]="b.north - b.south"
+          />
+        }
+      </svg>
+
+      @if (nino34Box(); as b) {
+        <span
+          class="map__tag"
+          [style.left.%]="((b.west - e.west) / (e.east - e.west)) * 100"
+          [style.bottom.%]="((b.north - e.south) / (e.north - e.south)) * 100"
+          aria-hidden="true"
+          >Niño 3.4</span
+        >
+      }
+    }
+
+    @if (showPlaceholder()) {
+      <div class="map__placeholder"><ng-content /></div>
+    }
+  </div>
+
+  <div class="map__axis" aria-hidden="true">
+    @for (tick of lonTicks(); track tick.lon) {
+      <span class="map__lon" [style.left.%]="tick.left">{{ tick.label }}</span>
+    }
+  </div>
+
+  <figcaption class="map__caption">
+    <span>{{ caption() }}</span>
+    <span class="map__legend">
+      <span class="visually-hidden">Colour scale:</span>
+      <span class="el-num">−{{ limit() }}</span>
+      <span class="map__ramp" aria-hidden="true"></span>
+      <span class="el-num">+{{ limit() }} °C</span>
+    </span>
+  </figcaption>
+</figure>

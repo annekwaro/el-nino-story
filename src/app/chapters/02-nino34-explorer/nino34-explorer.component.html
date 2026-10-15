@@ -1,0 +1,99 @@
+<section class="chapter" id="chapter-02" aria-labelledby="chapter-02-title">
+  <header class="chapter__intro">
+    <p class="el-kicker"><span class="el-num">02</span> / The record</p>
+    <h2 class="chapter__title" id="chapter-02-title">The Niño 3.4 Explorer</h2>
+    <p class="chapter__dek">
+      The temperature of one patch of the equatorial Pacific, month by month since 1950. Pick an event
+      to see the whole ocean that month.
+    </p>
+  </header>
+
+  <div class="explorer">
+    <div class="explorer__chart">
+      @if (index.value(); as data) {
+        <el-nino34-chart
+          [months]="data.months"
+          [events]="events"
+          [selectedMonth]="selectedMonth()"
+          [unavailable]="missingMonths()"
+          (eventSelect)="select($event)"
+        />
+      } @else {
+        <div class="chart-placeholder">
+          @if (index.error(); as error) {
+            <p>
+              Niño 3.4 index not available yet.<br />
+              <code>{{ errorText(error) }}</code>
+            </p>
+          } @else {
+            <p>Loading the Niño 3.4 index…</p>
+          }
+        </div>
+      }
+
+      <div class="events" role="group" aria-label="El Niño and La Niña events">
+        @for (event of events; track event.month; let i = $index) {
+          <button
+            type="button"
+            class="event"
+            [class.event--warm]="event.phase === 'el-nino'"
+            [class.event--cool]="event.phase === 'la-nina'"
+            [attr.aria-pressed]="i === selectedIndex()"
+            [attr.aria-label]="formatMonth(event.month) + ', ' + event.label"
+            [disabled]="missingMonths().has(event.month)"
+            (click)="select(i)"
+          >
+            <span class="event__dot" aria-hidden="true"></span>
+            <span class="el-num">{{ event.month.slice(0, 4) }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="explorer__map">
+      <el-sst-map
+        [data]="map.value()"
+        [status]="mapStatus()"
+        [showNino34Box]="true"
+        [caption]="'Sea-surface temperature anomaly, ' + formatMonth(selectedMonth())"
+      >
+        @if (map.error(); as error) {
+          <p>
+            Map for {{ formatMonth(selectedMonth()) }} not available yet.<br />
+            <code>{{ errorText(error) }}</code>
+          </p>
+        } @else {
+          <p>Loading map…</p>
+        }
+      </el-sst-map>
+    </div>
+
+    <aside class="explorer__narration" aria-live="polite" aria-labelledby="chapter-02-event">
+      <p class="el-kicker">
+        <span class="el-num">{{ formatMonth(selectedMonth()) }}</span> ·
+        {{ selectedEvent().phase === 'el-nino' ? 'El Niño' : 'La Niña' }}
+      </p>
+      <h3 class="narration__title" id="chapter-02-event">{{ selectedEvent().label }}</h3>
+      <p class="narration__text">{{ narration() }}</p>
+
+      @if (selectedAnomaly(); as anomaly) {
+        <p class="narration__value">
+          Niño 3.4 anomaly
+          <span class="el-num" [class.is-warm]="anomaly.warm" [class.is-cool]="!anomaly.warm">{{
+            anomaly.text
+          }}</span>
+        </p>
+      }
+
+      <div class="narration__nav">
+        <button type="button" class="nav-button" [disabled]="neighbour(-1) === null" (click)="move(-1)">
+          ← Previous
+        </button>
+        <span class="el-num narration__count">{{ selectedIndex() + 1 }} / {{ events.length }}</span>
+        <button type="button" class="nav-button" [disabled]="neighbour(1) === null" (click)="move(1)">
+          Next →
+        </button>
+      </div>
+    </aside>
+  </div>
+</section>

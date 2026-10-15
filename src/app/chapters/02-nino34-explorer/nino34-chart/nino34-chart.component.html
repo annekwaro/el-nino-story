@@ -1,0 +1,69 @@
+<svg
+  class="chart"
+  [attr.width]="width()"
+  [attr.height]="height()"
+  [attr.viewBox]="'0 0 ' + width() + ' ' + height()"
+  role="img"
+  [attr.aria-label]="ariaLabel()"
+>
+  @if (width() > 0) {
+    <!-- Y grid + labels (°C anomaly) -->
+    @for (tick of yTicks(); track tick.value) {
+      <line
+        class="grid"
+        [class.grid--zero]="tick.value === 0"
+        [attr.x1]="margin.left"
+        [attr.x2]="width() - margin.right"
+        [attr.y1]="tick.y"
+        [attr.y2]="tick.y"
+      />
+      <text class="axis-label" [attr.x]="margin.left - 8" [attr.y]="tick.y" dy="0.32em" text-anchor="end">
+        {{ tick.label }}
+      </text>
+    }
+
+    <path class="bars bars--warm" [attr.d]="bars().warm" />
+    <path class="bars bars--cool" [attr.d]="bars().cool" />
+
+    <!-- X axis: decades -->
+    @for (tick of xTicks(); track tick.label) {
+      <line
+        class="tick"
+        [attr.x1]="tick.x"
+        [attr.x2]="tick.x"
+        [attr.y1]="height() - margin.bottom"
+        [attr.y2]="height() - margin.bottom + 5"
+      />
+      <text class="axis-label" [attr.x]="tick.x" [attr.y]="height() - margin.bottom + 18" text-anchor="middle">
+        {{ tick.label }}
+      </text>
+    }
+
+    <!-- Selected month -->
+    <g class="selection" [style.transform]="'translateX(' + selectedX() + 'px)'">
+      <line class="selection__line" x1="0" x2="0" [attr.y1]="margin.top - 6" [attr.y2]="height() - margin.bottom" />
+    </g>
+
+    <!-- Event markers: mouse affordance; the event buttons below the chart are the keyboard path -->
+    @for (marker of markers(); track marker.index) {
+      <g
+        class="marker"
+        [class.marker--warm]="marker.event.phase === 'el-nino'"
+        [class.marker--cool]="marker.event.phase === 'la-nina'"
+        [class.is-selected]="marker.event.month === selectedMonth()"
+        [attr.transform]="'translate(' + marker.x + ' ' + (margin.top - 10) + ')'"
+        aria-hidden="true"
+        (click)="eventSelect.emit(marker.index)"
+        (pointerenter)="hovered.set(marker.index)"
+        (pointerleave)="hovered.set(null)"
+      >
+        <rect class="marker__hit" x="-7" y="-14" width="14" height="24" />
+        <path class="marker__shape" d="M-4.5,-6 L4.5,-6 L0,2 Z" />
+      </g>
+    }
+
+    @if (tooltip(); as tip) {
+      <text class="tooltip" [attr.x]="tip.x" y="12" [attr.text-anchor]="tip.anchor">{{ tip.text }}</text>
+    }
+  }
+</svg>

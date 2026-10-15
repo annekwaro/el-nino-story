@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { HeroComponent } from './01-hero/hero.component';
-import { ThePacificComponent } from './02-the-pacific/the-pacific.component';
-import { TheShiftComponent } from './03-the-shift/the-shift.component';
+import { Nino34ExplorerComponent } from './02-nino34-explorer/nino34-explorer.component';
+import { YearsThatChangedComponent } from './03-years-that-changed/years-that-changed.component';
 import { TeleconnectionsComponent } from './04-teleconnections/teleconnections.component';
 import { ImpactsComponent } from './05-impacts/impacts.component';
 import { WhatComesNextComponent } from './06-what-comes-next/what-comes-next.component';
@@ -12,16 +12,16 @@ import { WhatComesNextComponent } from './06-what-comes-next/what-comes-next.com
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     HeroComponent,
-    ThePacificComponent,
-    TheShiftComponent,
+    Nino34ExplorerComponent,
+    YearsThatChangedComponent,
     TeleconnectionsComponent,
     ImpactsComponent,
     WhatComesNextComponent,
   ],
   template: `
     <el-hero />
-    <el-the-pacific />
-    <el-the-shift />
+    <el-nino34-explorer />
+    <el-years-that-changed />
     <el-teleconnections />
     <el-impacts />
     <el-what-comes-next />

@@ -1,0 +1,12 @@
+# Python 3.11+
+xarray
+numpy
+requests
+# NetCDF reader. netCDF4 has no wheels for Python 3.14 yet, so 3.14 uses
+# h5netcdf instead; xarray picks whichever is installed. ERSST v5 is HDF5-based,
+# so both read it.
+netcdf4; python_version < "3.14"
+h5netcdf; python_version >= "3.14"
+h5py; python_version >= "3.14"
+# open_mfdataset (directory of monthly files) needs dask.
+dask

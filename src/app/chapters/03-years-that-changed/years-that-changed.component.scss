@@ -1,0 +1,172 @@
+:host {
+  display: block;
+
+  --spine-width: 3px;
+  --spine-column: 6rem;
+}
+
+.chapter {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: var(--el-space-7) var(--el-gutter) var(--el-space-6);
+}
+
+.chapter__intro {
+  max-width: var(--el-measure);
+  margin-bottom: var(--el-space-6);
+}
+
+.chapter__title {
+  margin-top: var(--el-space-3);
+  font-size: var(--el-text-xl);
+}
+
+.chapter__dek {
+  margin: var(--el-space-3) 0 0;
+  color: var(--el-ink-muted);
+}
+
+/* ---------- Timeline ----------
+   Rows sit flush (no gap) so the spine segments join into one line. */
+
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--spine-column) minmax(0, 1fr);
+  align-items: center;
+  padding: var(--el-space-4) 0;
+}
+
+.row__spine {
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  width: var(--spine-width);
+  translate: -50% 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--prev) 50%, var(--phase)),
+    var(--phase) 50%,
+    color-mix(in srgb, var(--phase) 50%, var(--next))
+  );
+  opacity: 0.2;
+  transition: opacity var(--el-duration-slow) var(--el-ease-out);
+
+  .is-revealed & {
+    opacity: 1;
+  }
+}
+
+.row__year {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+  padding: var(--el-space-1) var(--el-space-2);
+  border: 1px solid var(--phase);
+  border-radius: 999px;
+  background: var(--el-bg);
+  font-size: var(--el-text-xs);
+  color: var(--el-ink);
+  white-space: nowrap;
+}
+
+.card {
+  grid-row: 1;
+  max-width: 24rem;
+  padding: var(--el-space-4);
+  border-top: 2px solid var(--phase);
+  background: color-mix(in srgb, var(--phase) 6%, var(--el-bg));
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity var(--el-duration-slow) var(--el-ease-out),
+    transform var(--el-duration-slow) var(--el-ease-out);
+
+  .is-revealed & {
+    opacity: 1;
+    transform: none;
+  }
+
+  .row--left & {
+    grid-column: 1;
+    justify-self: end;
+  }
+
+  .row--right & {
+    grid-column: 3;
+    justify-self: start;
+  }
+}
+
+.card__tag {
+  margin: 0 0 var(--el-space-2);
+  font-family: var(--el-font-mono);
+  font-size: var(--el-text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--phase);
+}
+
+.card__title {
+  margin-bottom: var(--el-space-2);
+  font-family: var(--el-font-display);
+  font-size: var(--el-text-lg);
+}
+
+.card__text {
+  margin: 0;
+  font-family: var(--el-font-body);
+  font-size: var(--el-text-sm);
+  line-height: 1.55;
+  color: var(--el-ink-muted);
+}
+
+/* ---------- Mobile: spine down the left edge, every card to its right ---------- */
+
+@media (max-width: 767.98px) {
+  :host {
+    --spine-column: 4.75rem;
+  }
+
+  .row {
+    grid-template-columns: var(--spine-column) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .row__spine {
+    left: calc(var(--spine-column) / 2);
+  }
+
+  .row__year {
+    grid-column: 1;
+    margin-top: var(--el-space-4);
+  }
+
+  .row--left .card,
+  .row--right .card {
+    grid-column: 2;
+    justify-self: stretch;
+    max-width: none;
+  }
+}
+
+/* Cards are simply there: no fade, no slide. */
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .row__spine {
+    opacity: 1;
+    transition: none;
+  }
+}

@@ -1,0 +1,144 @@
+:host {
+  display: block;
+  container-type: inline-size;
+}
+
+.map {
+  margin: 0;
+}
+
+.map__frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--el-accent-neutral) 12%, var(--el-bg));
+  transition: opacity var(--el-duration-base) var(--el-ease-out);
+
+  &.is-loading {
+    opacity: 0.55;
+  }
+
+  &.is-empty .map__canvas,
+  &.is-empty .map__overlay,
+  &.is-empty .map__tag {
+    visibility: hidden;
+  }
+}
+
+.map__canvas,
+.map__overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.map__overlay {
+  overflow: visible;
+}
+
+.map__equator {
+  stroke: var(--el-ink);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.35;
+  vector-effect: non-scaling-stroke;
+}
+
+.map__box {
+  fill: none;
+  stroke: var(--el-ink);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.map__tag {
+  position: absolute;
+  padding-bottom: 2px;
+  font-family: var(--el-font-display);
+  font-size: var(--el-text-xs);
+  font-weight: 600;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--el-ink);
+}
+
+.map__placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--el-space-3);
+  font-size: var(--el-text-sm);
+  text-align: center;
+  color: var(--el-ink-muted);
+}
+
+.map__axis {
+  position: relative;
+  height: 1.25rem;
+}
+
+.map__lon {
+  position: absolute;
+  top: var(--el-space-1);
+  translate: -50% 0;
+  font-family: var(--el-font-mono);
+  font-size: var(--el-text-xs);
+  color: var(--el-ink-muted);
+  white-space: nowrap;
+
+  &:first-child {
+    translate: 0 0;
+  }
+
+  &:last-child {
+    translate: -100% 0;
+  }
+}
+
+.map__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--el-space-2) var(--el-space-4);
+  margin-top: var(--el-space-2);
+  font-size: var(--el-text-sm);
+  color: var(--el-ink-muted);
+}
+
+.map__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--el-space-2);
+  font-size: var(--el-text-xs);
+}
+
+.map__ramp {
+  width: 6rem;
+  height: 0.5rem;
+  border-radius: 1px;
+  background: linear-gradient(
+    to right,
+    var(--el-accent-cool),
+    var(--el-bg),
+    var(--el-accent-warm)
+  );
+  box-shadow: inset 0 0 0 1px var(--el-rule);
+}
+
+/* Narrow maps: every other longitude label. */
+@container (max-width: 480px) {
+  .map__lon:nth-child(even) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map__frame {
+    transition: none;
+  }
+}
