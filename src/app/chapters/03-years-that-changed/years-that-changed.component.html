@@ -7,7 +7,7 @@
     </p>
   </header>
 
-  <ol class="timeline">
+  <ol class="timeline" #list>
     @for (row of rows; track row.event.years; let i = $index) {
       <li
         #item
@@ -17,14 +17,18 @@
         [class.is-revealed]="revealed().has(i)"
         [style.--phase]="row.color"
         [style.--next]="row.next"
+        [style.--draw]="drawOf(i)"
       >
         <span class="row__spine" aria-hidden="true"></span>
         <span class="row__year el-num">{{ row.event.years }}</span>
 
         <article class="card">
-          <p class="card__tag">{{ row.event.phase === 'el-nino' ? 'El Niño' : 'La Niña' }}</p>
-          <h3 class="card__title">{{ row.event.title }}</h3>
-          <p class="card__text">{{ row.event.text }}</p>
+          <span class="card__bar" aria-hidden="true"></span>
+          <div class="card__body">
+            <p class="card__tag">{{ row.event.phase === 'el-nino' ? 'El Niño' : 'La Niña' }}</p>
+            <h3 class="card__title">{{ row.event.title }}</h3>
+            <p class="card__text">{{ row.event.text }}</p>
+          </div>
         </article>
       </li>
     }

@@ -58,16 +58,14 @@
     var(--phase) var(--chip-centre),
     var(--next) var(--chip-centre)
   );
-  opacity: 0.2;
-  transition: opacity var(--el-duration-slow) var(--el-ease-out);
-
-  .is-revealed & {
-    opacity: 1;
-  }
+  /* Drawn downward with scroll: top anchored, bottom follows the reader. */
+  transform: scaleY(var(--draw, 0));
+  transform-origin: top;
 }
 
 .row__year {
   position: relative;
+  transform: scale(0.85);
   grid-column: 2;
   grid-row: 1;
   justify-self: center;
@@ -80,23 +78,12 @@
   white-space: nowrap;
 }
 
+/* The 2px top padding is where the accent bar draws; the body carries the old border and tint. */
 .card {
+  position: relative;
   grid-row: 1;
   max-width: 24rem;
-  padding: var(--el-space-4);
-  border: 1px solid var(--el-rule);
-  border-top: 2px solid var(--phase);
-  background: color-mix(in srgb, var(--phase) 6%, var(--el-bg));
-  opacity: 0;
-  transform: translateY(1.5rem);
-  transition:
-    opacity var(--el-duration-slow) var(--el-ease-out),
-    transform var(--el-duration-slow) var(--el-ease-out);
-
-  .is-revealed & {
-    opacity: 1;
-    transform: none;
-  }
+  padding-top: 2px;
 
   .row--left & {
     grid-column: 1;
@@ -106,6 +93,45 @@
   .row--right & {
     grid-column: 3;
     justify-self: start;
+  }
+}
+
+.card__bar {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: var(--phase);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.card__body {
+  padding: var(--el-space-4);
+  border: 1px solid var(--el-rule);
+  border-top: 0;
+  background: color-mix(in srgb, var(--phase) 6%, var(--el-bg));
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+/* Once a card enters: bar draws (300 ms), body fades up 100 ms after (500 ms), then the chip settles. */
+.is-revealed {
+  .card__bar {
+    transform: none;
+    transition: transform 300ms var(--el-ease-out);
+  }
+
+  .card__body {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 500ms ease-out 400ms,
+      transform 500ms ease-out 400ms;
+  }
+
+  .row__year {
+    transform: none;
+    transition: transform 350ms cubic-bezier(0.2, 0.8, 0.3, 1) 900ms;
   }
 }
 
@@ -165,15 +191,18 @@
 }
 
 /* Cards are simply there: no fade, no slide. */
+/* Everything in its final state, nothing moves. */
 @media (prefers-reduced-motion: reduce) {
-  .card {
+  .row__spine,
+  .row__year,
+  .card__bar,
+  .card__body {
     opacity: 1;
     transform: none;
     transition: none;
   }
 
-  .row__spine {
-    opacity: 1;
+  .is-revealed :is(.row__year, .card__bar, .card__body) {
     transition: none;
   }
 }
