@@ -2,58 +2,23 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
 
-## Development server
+# El Niño: The Ocean That Rewrites Weather
 
-To start a local development server, run:
+A scrollytelling data story about ENSO and global water availability.
+Data from NOAA ERSST v5 (1854–present). Built with Angular 19, D3, and
+Scrollama-free IntersectionObserver scroll detection.
 
-```bash
-ng serve
-```
+**Live:** [https://el-nino-story.vercel.app/]
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## What it does
+- Hero: 75-year Niño 3.4 index drawn in on load
+- Chapter 2: Interactive explorer — scrub through 10 significant ENSO events
+- Chapter 3: Timeline of the events that shaped climate memory
+- (Chapters 4–6: in progress)
 
-## Code scaffolding
+## Data pipeline
+NOAA ERSST v5 → Python preprocessing (`scripts/preprocess.py`) → JSON → Angular
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Stack
+Angular 19 · Signals · OnPush · D3 (math only) · Self-hosted fonts · Deployed on Vercel
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
