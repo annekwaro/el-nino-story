@@ -2,6 +2,8 @@
   class="hero"
   id="top"
   aria-labelledby="hero-title"
+  [class.is-ready]="count() > 0 && size().width > 0"
+  [class.is-static]="!!index.error()"
   (pointermove)="onPointer($event, chart)"
   (pointerleave)="hoverIndex.set(null)"
 >
@@ -25,16 +27,14 @@
             <stop offset="1" class="stop-cool" />
           </linearGradient>
         </defs>
-        <g class="wave__fills">
-          <path class="wave__warm" [attr.d]="paths().warm" />
-          <path class="wave__cool" [attr.d]="paths().cool" />
-        </g>
+        <g class="wave__fill wave__fill--warm"><path class="wave__warm" [attr.d]="paths().warm" /></g>
+        <g class="wave__fill wave__fill--cool"><path class="wave__cool" [attr.d]="paths().cool" /></g>
         <line class="wave__zero" x1="0" [attr.x2]="size().width" [attr.y1]="paths().zero" [attr.y2]="paths().zero" />
         <path class="wave__line" pathLength="1" [attr.d]="paths().line" />
       </svg>
 
-      @for (peak of peaks(); track peak.year) {
-        <span class="wave__peak" [style.left.px]="peak.x" [style.top.px]="peak.y">
+      @for (peak of peaksByYear(); track peak.year) {
+        <span class="wave__peak" [style.left.px]="peak.x" [style.top.px]="peak.y" [style.--i]="$index">
           <span class="wave__label el-num">{{ peak.year }} <b>{{ peak.value }}</b></span>
         </span>
       }
@@ -57,8 +57,8 @@
 
   @if (count()) {
     <p class="hero__caption">
-      Niño 3.4 sea temperature vs normal · <i class="warm">warm</i> El Niño above,
-      <i class="cool">cool</i> La Niña below
+      Niño 3.4 sea temperature vs normal · <b class="warm">warm</b> El Niño above,
+      <b class="cool">cool</b> La Niña below
     </p>
     <span class="hero__axis hero__axis--start el-num" aria-hidden="true">{{ span()[0] }}</span>
     <span class="hero__axis hero__axis--end el-num" aria-hidden="true">{{ span()[1] }}</span>

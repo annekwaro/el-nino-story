@@ -1,10 +1,16 @@
 :host {
   display: block;
 
-  /* Entrance timeline: title, then line, then fills, then labels (~3.5 s). */
-  --t-line: 300ms;
-  --t-fills: 2100ms;
-  --t-labels: 2700ms;
+  /* Entrance timeline, from the moment the chart is ready (~4.2 s). */
+  --t-title: 200ms; /* after a 200 ms empty hold */
+  --t-sub: 750ms; /* 150 ms after the title ends */
+  --t-zero: 1050ms;
+  --t-line: 1300ms; /* traces in behind the baseline */
+  --t-warm: 1450ms; /* trails the line by 150 ms */
+  --t-cool: 1650ms; /* 200 ms after warm */
+  --t-peaks: 3100ms; /* +150 ms per label */
+  --t-last: 3800ms;
+  --line-ms: 1400ms;
 }
 
 .hero {
@@ -26,7 +32,6 @@
 
 .wave__svg {
   display: block;
-  overflow: visible;
 }
 
 .stop-warm {
@@ -57,14 +62,12 @@
   fill: url(#wave-cool);
 }
 
-.wave__fills {
-  animation: fade 600ms ease var(--t-fills) both;
-}
-
 .wave__zero {
   stroke: var(--el-ink);
   stroke-opacity: 0.2;
   stroke-dasharray: 3 4;
+  transform-box: fill-box;
+  transform-origin: left center;
 }
 
 /* pathLength=1, so a dash of 1 is the whole line. */
@@ -73,26 +76,15 @@
   stroke: var(--el-ink);
   stroke-width: 1.5;
   stroke-dasharray: 1;
-  animation: draw 1800ms var(--el-ease-out) var(--t-line) both;
 }
 
-@keyframes draw {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-/* The peaks reach the top of the screen, so each label hangs below on a dotted leader. */
+/* Label hangs below the peak (the peaks reach the top of the screen) on a dotted leader. */
 .wave__peak {
   position: absolute;
   display: grid;
   justify-items: start;
   margin-top: 6px;
   pointer-events: none;
-  animation: fade 400ms ease var(--t-labels) both;
 
   &::before {
     content: '';
@@ -108,7 +100,6 @@
 .wave__label {
   translate: -0.75rem 0;
   padding: 0.1rem 0.35rem;
-  border-radius: 2px;
   background: var(--el-bg);
   font-size: var(--el-text-xs);
   color: var(--el-ink-muted);
@@ -169,7 +160,6 @@
   text-shadow:
     0 0 4px var(--el-bg),
     0 0 14px var(--el-bg);
-  animation: rise 300ms var(--el-ease-out) both;
 }
 
 .hero__title {
@@ -187,7 +177,6 @@
 .hero__cue,
 .hero__caption {
   bottom: calc(var(--el-space-3) + 1.5rem);
-  animation: fade 400ms ease var(--t-labels) both;
 }
 
 .hero__cue {
@@ -204,11 +193,6 @@
   text-align: right;
   color: var(--el-ink-muted);
 
-  i {
-    font-style: normal;
-    font-weight: 600;
-  }
-
   .warm {
     color: var(--el-accent-warm);
   }
@@ -222,7 +206,6 @@
   bottom: var(--el-space-3);
   font-size: var(--el-text-xs);
   color: var(--el-ink-muted);
-  animation: fade 400ms ease var(--t-labels) both;
 }
 
 .hero__axis--start {
@@ -231,6 +214,54 @@
 
 .hero__axis--end {
   right: var(--el-gutter);
+}
+
+/* ---------- Entrance: runs once, when the chart is ready ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Nothing shows before the sequence starts, unless the data failed to load. */
+  .hero:not(.is-ready):not(.is-static) :is(.hero__title, .hero__subtitle) {
+    opacity: 0;
+  }
+
+  .is-ready {
+    .hero__title {
+      animation: rise 400ms var(--el-ease-out) var(--t-title) both;
+    }
+
+    .hero__subtitle {
+      animation: rise 300ms var(--el-ease-out) var(--t-sub) both;
+    }
+
+    .wave__zero {
+      animation: grow-x 500ms var(--el-ease-out) var(--t-zero) both;
+    }
+
+    .wave__line {
+      animation: trace var(--line-ms) ease-in-out var(--t-line) both;
+    }
+
+    /* The fill is uncovered left to right just behind the line, fading up as it goes. */
+    .wave__fill--warm {
+      animation:
+        flood var(--line-ms) ease-in-out var(--t-warm) both,
+        fade 700ms ease-out var(--t-warm) both;
+    }
+
+    .wave__fill--cool {
+      animation:
+        flood var(--line-ms) ease-in-out var(--t-cool) both,
+        fade 700ms ease-out var(--t-cool) both;
+    }
+
+    .wave__peak {
+      animation: fade 400ms ease-out calc(var(--t-peaks) + var(--i, 0) * 150ms) both;
+    }
+
+    :is(.hero__cue, .hero__caption, .hero__axis) {
+      animation: fade 400ms ease-out var(--t-last) both;
+    }
+  }
 }
 
 @keyframes rise {
@@ -246,21 +277,32 @@
   }
 }
 
-@media (max-width: 599.98px) {
-  .wave__label b {
-    display: none;
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
   }
 }
 
-/* Final state immediately. */
-@media (prefers-reduced-motion: reduce) {
-  .hero__title-block,
-  .wave__line,
-  .wave__fills,
-  .wave__peak,
-  .hero__cue,
-  .hero__caption,
-  .hero__axis {
-    animation: none;
+@keyframes trace {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes flood {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (max-width: 599.98px) {
+  .wave__label b {
+    display: none;
   }
 }

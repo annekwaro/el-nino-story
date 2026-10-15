@@ -94,6 +94,9 @@ export class HeroComponent {
     return chosen.map(({ i, v }) => ({ ...this.place(i, v), year: this.months()[i].month.slice(0, 4) }));
   });
 
+  /** Labels appear in time order, 1997 then 2015. */
+  protected readonly peaksByYear = computed(() => [...this.peaks()].sort((a, b) => a.x - b.x));
+
   protected readonly readout = computed(() => {
     const i = this.hoverIndex();
     if (i === null || !this.months()[i]) return null;
