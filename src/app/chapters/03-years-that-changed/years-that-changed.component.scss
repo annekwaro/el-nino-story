@@ -36,6 +36,8 @@
 }
 
 .row {
+  --chip-centre: 50%;
+
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--spine-column) minmax(0, 1fr);
@@ -49,11 +51,12 @@
   left: 50%;
   width: var(--spine-width);
   translate: -50% 0;
+  /* Each segment takes the colour of the event it leads into: above the chip, this
+     event's; below it, the next one's. The hard stop hides behind the chip. */
   background: linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--prev) 50%, var(--phase)),
-    var(--phase) 50%,
-    color-mix(in srgb, var(--phase) 50%, var(--next))
+    var(--phase) var(--chip-centre),
+    var(--next) var(--chip-centre)
   );
   opacity: 0.2;
   transition: opacity var(--el-duration-slow) var(--el-ease-out);
@@ -81,6 +84,7 @@
   grid-row: 1;
   max-width: 24rem;
   padding: var(--el-space-4);
+  border: 1px solid var(--el-rule);
   border-top: 2px solid var(--phase);
   background: color-mix(in srgb, var(--phase) 6%, var(--el-bg));
   opacity: 0;
@@ -136,6 +140,9 @@
   }
 
   .row {
+    /* Chip sits near the top here: row padding + chip margin + half the chip's height. */
+    --chip-centre: calc(2 * var(--el-space-4) + 0.8rem);
+
     grid-template-columns: var(--spine-column) minmax(0, 1fr);
     align-items: start;
   }

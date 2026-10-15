@@ -25,13 +25,12 @@ const PHASE_COLOR: Record<EnsoPhase, string> = {
 })
 export class YearsThatChangedComponent {
   /**
-   * Each row carries its own phase colour and its neighbours', so its spine segment
-   * can blend into the next row's and the whole spine reads as one gradient.
+   * Each row carries its own phase colour and the next event's: its spine runs in its
+   * own colour down to its chip, then in the next event's colour toward the next chip.
    */
   protected readonly rows = TIMELINE.map((event, i) => ({
     event,
     color: PHASE_COLOR[event.phase],
-    prev: PHASE_COLOR[TIMELINE[Math.max(0, i - 1)].phase],
     next: PHASE_COLOR[TIMELINE[Math.min(TIMELINE.length - 1, i + 1)].phase],
   }));
 
