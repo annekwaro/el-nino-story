@@ -1,0 +1,100 @@
+<div class="picker" role="group" [attr.aria-label]="'Choose up to 4 episodes to compare'">
+  @for (episode of pool(); track episode.id) {
+    <button
+      type="button"
+      class="chip"
+      [attr.data-slot]="isSelected(episode.id) ? slotOf(episode.id) : null"
+      [attr.aria-pressed]="isSelected(episode.id)"
+      (click)="toggle(episode.id)"
+      (pointerenter)="isSelected(episode.id) && hovered.set(episode.id)"
+      (pointerleave)="hovered.set(null)"
+      (focus)="isSelected(episode.id) && hovered.set(episode.id)"
+      (blur)="hovered.set(null)"
+    >
+      <span class="chip__dot" aria-hidden="true"></span>
+      <span class="el-num">{{ episode.id }}</span>
+    </button>
+  }
+</div>
+
+<div class="layout" [style.--radar-size]="size() + 'px'">
+  <div class="radar" elReveal>
+    @if (size() > 0) {
+      <svg
+        [attr.width]="size()"
+        [attr.height]="size()"
+        [attr.viewBox]="'0 0 ' + size() + ' ' + size()"
+        role="img"
+        [attr.aria-label]="ariaLabel()"
+      >
+        @for (ring of rings(); track $index) {
+          <path class="ring" [class.ring--outer]="$last" [attr.d]="ring" />
+        }
+        @for (spoke of spokes(); track spoke.key) {
+          <line class="spoke" [attr.x1]="centre()" [attr.y1]="centre()" [attr.x2]="spoke.x" [attr.y2]="spoke.y" />
+          <text class="axis-label" [attr.x]="spoke.lx" [attr.y]="spoke.ly" [attr.text-anchor]="spoke.anchor">
+            @for (line of spoke.lines; track $index) {
+              <tspan [attr.x]="spoke.lx" [attr.dy]="($first ? spoke.dy : 1.15) + 'em'">{{ line }}</tspan>
+            }
+          </text>
+        }
+
+        @for (s of series(); track s.id) {
+          <g
+            class="series"
+            [attr.data-slot]="s.slot"
+            [class.is-dimmed]="hovered() !== null && hovered() !== s.id"
+            [class.is-hovered]="hovered() === s.id"
+            [style.transform-origin]="centre() + 'px ' + centre() + 'px'"
+            (pointerenter)="hovered.set(s.id)"
+            (pointerleave)="hovered.set(null)"
+          >
+            <path class="series__area" [attr.d]="s.path" />
+            @for (v of s.vertices; track $index) {
+              <circle class="series__dot" [attr.cx]="v[0]" [attr.cy]="v[1]" r="3" />
+            }
+          </g>
+        }
+      </svg>
+    }
+  </div>
+
+  <div class="values-wrap">
+  <table class="values">
+    <caption class="visually-hidden">Values for the selected episodes</caption>
+    <thead>
+      <tr>
+        <th scope="col"><span class="visually-hidden">Measure</span></th>
+        @for (s of selectedEpisodes(); track s.episode.id) {
+          <th
+            scope="col"
+            [attr.data-slot]="s.slot"
+            [class.is-dimmed]="hovered() !== null && hovered() !== s.episode.id"
+            (pointerenter)="hovered.set(s.episode.id)"
+            (pointerleave)="hovered.set(null)"
+          >
+            <span class="values__dot" aria-hidden="true"></span>
+            <span class="el-num">{{ s.episode.id }}</span>
+            <span class="values__peak">peak {{ formatMonth(s.episode.peakMonth) }}</span>
+          </th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of table(); track row.label) {
+        <tr>
+          <th scope="row">{{ row.label }}</th>
+          @for (cell of row.cells; track $index) {
+            <td
+              class="el-num"
+              [class.is-dimmed]="hovered() !== null && hovered() !== selectedEpisodes()[$index].episode.id"
+            >
+              {{ cell }}
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+  </div>
+</div>

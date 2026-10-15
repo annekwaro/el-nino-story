@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { EnsoPhase } from '../../core/data/climate-data';
+import { PhaseToggleComponent } from '../../shared/phase-toggle/phase-toggle.component';
 import { TeleconnectionMapComponent } from './teleconnection-map/teleconnection-map.component';
 import { EFFECT_LABEL, IMPACTS, REGIONS } from './teleconnections';
 
@@ -8,13 +9,11 @@ const PHASE_NAME: Record<EnsoPhase, string> = { 'el-nino': 'El Niño', 'la-nina'
 @Component({
   selector: 'el-teleconnections',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TeleconnectionMapComponent],
+  imports: [PhaseToggleComponent, TeleconnectionMapComponent],
   templateUrl: './teleconnections.component.html',
   styleUrl: './teleconnections.component.scss',
 })
 export class TeleconnectionsComponent {
-  protected readonly phases: readonly EnsoPhase[] = ['el-nino', 'la-nina'];
-  protected readonly phaseName = PHASE_NAME;
   protected readonly effectLabel = EFFECT_LABEL;
 
   protected readonly phase = signal<EnsoPhase>('el-nino');

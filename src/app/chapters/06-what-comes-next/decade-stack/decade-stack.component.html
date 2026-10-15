@@ -1,0 +1,44 @@
+<div class="head">
+  <ul class="legend" aria-hidden="true">
+    @for (s of segments; track s.key) {
+      <li><span class="swatch" [attr.data-key]="s.key"></span>{{ s.name }}</li>
+    }
+  </ul>
+  <div class="mode" role="group" aria-label="Measure bars by">
+    <button type="button" [attr.aria-pressed]="mode() === 'share'" (click)="mode.set('share')">Share</button>
+    <button type="button" [attr.aria-pressed]="mode() === 'months'" (click)="mode.set('months')">Months</button>
+  </div>
+</div>
+
+<ol class="bars" elReveal (pointerleave)="active.set(null)">
+  @for (row of rows(); track row.decade; let r = $index) {
+    <li class="row" [style.--row]="r">
+      <span class="row__label el-num">{{ row.label }}@if (row.partial) {<sup>*</sup>}</span>
+      <span class="row__track">
+        @for (part of row.parts; track part.key) {
+          <button
+            type="button"
+            class="seg"
+            [attr.data-key]="part.key"
+            [class.is-active]="active()?.row === r && active()?.key === part.key"
+            [class.is-dimmed]="active() !== null && active()?.key !== part.key"
+            [style.width]="part.width + '%'"
+            [attr.aria-label]="row.label + ', ' + part.name + ': ' + part.months + ' months, ' + part.share + '%'"
+            (pointerenter)="active.set({ row: r, key: part.key })"
+            (focus)="active.set({ row: r, key: part.key })"
+            (blur)="active.set(null)"
+          >
+            @if (part.width >= 9) {
+              <span class="seg__label el-num">{{ mode() === 'share' ? part.share + '%' : part.months }}</span>
+            }
+          </button>
+        }
+      </span>
+    </li>
+  }
+</ol>
+
+<div class="foot">
+  <p class="readout el-num" aria-live="polite">{{ readout() ?? 'Hover or tab through a bar to read it.' }}</p>
+  <p class="note">* Partial decade, through {{ through() }}.</p>
+</div>

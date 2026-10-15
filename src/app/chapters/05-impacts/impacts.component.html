@@ -1,0 +1,132 @@
+<section class="chapter" id="chapter-05" aria-labelledby="chapter-05-title">
+  <header class="chapter__intro">
+    <p class="el-kicker"><span class="el-num">05</span> / Impacts</p>
+    <h2 class="chapter__title" id="chapter-05-title">Floods, droughts, fisheries</h2>
+    <p class="chapter__dek">
+      Every El Niño moves the same machinery, but never in quite the same way. Where the warm water
+      settles decides who floods, who dries out and who goes hungry for fish.
+    </p>
+  </header>
+
+  <!-- 1 · Fingerprints -->
+  <article class="part" aria-labelledby="ch5-fingerprints">
+    <div class="part__text">
+      <p class="part__kicker el-kicker">No two alike</p>
+      <h3 class="part__title" id="ch5-fingerprints">Each event leaves its own fingerprint</h3>
+      @if (rivals(); as r) {
+        <p>
+          By the usual yardstick, 2015–16 beat 1997–98: Niño 3.4 peaked at
+          <strong class="el-num warm">{{ r.newPeak }}</strong> against
+          <strong class="el-num warm">{{ r.oldPeak }}</strong>. But off the coast of Peru, 1997–98 ran
+          <strong class="el-num warm">{{ r.oldCoast }}</strong> warm and 2015–16 only
+          <strong class="el-num warm">{{ r.newCoast }}</strong>. The heat sat in different places, and
+          that changes everything downstream.
+        </p>
+      }
+      <p class="part__hint">
+        Pick up to four events. Each spoke runs to the record for that phase; shapes leaning right
+        crowd the South American coast, shapes leaning left sit out in the central Pacific.
+      </p>
+    </div>
+
+    <div class="part__controls">
+      <el-phase-toggle [(phase)]="radarPhase" label="Compare" />
+    </div>
+
+    @if (data.episodes.value(); as file) {
+      <el-episode-radar [episodes]="file.episodes" [phase]="radarPhase()" />
+    } @else {
+      <div class="placeholder">
+        @if (data.episodes.error(); as error) {
+          <p>Episode data not available.<br /><code>{{ errorText(error) }}</code></p>
+        } @else {
+          <p>Loading episodes…</p>
+        }
+      </div>
+    }
+  </article>
+
+  <!-- 2 · Rainfall -->
+  <article class="part" aria-labelledby="ch5-rain">
+    <div class="part__text">
+      <p class="part__kicker el-kicker">Where the rain goes</p>
+      <h3 class="part__title" id="ch5-rain">The map, checked against every winter since 1979</h3>
+      @if (steadiest(); as s) {
+        <p>
+          Chapter 4's map is a tendency, not a promise. Across {{ s.count }} {{ s.phase }} winters,
+          {{ s.region }} came out {{ s.direction }} than normal in
+          <strong class="el-num">{{ s.sameSign }} of {{ s.total }}</strong>. Other regions only lean
+          the expected way.
+        </p>
+      }
+      @if (peru(); as p) {
+        <p>
+          Coastal Peru is the outlier that proves the point. Its rain jumped
+          <strong class="el-num wet">{{ p.a }}</strong> in 1982–83 and
+          <strong class="el-num wet">{{ p.b }}</strong> in 1997–98, but came in at
+          <strong class="el-num dry">{{ p.c }}</strong> in 2015–16, when the warmth stayed out at sea.
+        </p>
+      }
+    </div>
+
+    <div class="part__controls">
+      <el-phase-toggle [(phase)]="rainPhase" label="Show winters of" />
+      <p class="el-kicker part__season">Dec–Feb rainfall vs 1991–2020 normal</p>
+    </div>
+
+    @if (data.rainfall.value(); as file) {
+      <el-rainfall-matrix [data]="file" [phase]="rainPhase()" />
+    } @else {
+      <div class="placeholder">
+        @if (data.rainfall.error(); as error) {
+          <p>Rainfall data not available.<br /><code>{{ errorText(error) }}</code></p>
+        } @else {
+          <p>Loading rainfall…</p>
+        }
+      </div>
+    }
+  </article>
+
+  <!-- 3 · Fisheries -->
+  <article class="part" aria-labelledby="ch5-fish">
+    <div class="part__text part__text--split">
+      <div>
+        <p class="part__kicker el-kicker">When the upwelling stops</p>
+        <h3 class="part__title" id="ch5-fish">The sea off Peru feeds the world, until it warms</h3>
+        <p>
+          In a normal year, winds drag cold, nutrient-rich water up from the deep along the Peruvian
+          coast. It feeds the anchoveta, the largest single-species fishery on Earth, ground into
+          fishmeal for farms worldwide.
+        </p>
+        <p>
+          El Niño caps that cold water with a warm, nutrient-poor layer. The fish scatter or move
+          deeper, and the catch falls. In 1972–73, with the fishery already pushed hard, it collapsed.
+        </p>
+      </div>
+      @if (coastRecord(); as r) {
+        <aside class="stat" elReveal>
+          <p class="stat__value">{{ r.value }}</p>
+          <p class="stat__label">Warmest month off Peru since 1950: {{ r.month }}</p>
+        </aside>
+      }
+    </div>
+
+    @if (data.nino12.value(); as file) {
+      <figure class="figure">
+        <el-coast-chart [months]="file.months" />
+        <figcaption class="figure__caption">
+          Sea-surface temperature anomaly off coastal Peru (Niño 1+2 region), monthly, against 1991–2020.
+          Hover or drag to read any month.
+        </figcaption>
+      </figure>
+    } @else {
+      <div class="placeholder">
+        @if (data.nino12.error(); as error) {
+          <p>Coastal index not available.<br /><code>{{ errorText(error) }}</code></p>
+        } @else {
+          <p>Loading coastal temperatures…</p>
+        }
+      </div>
+    }
+  </article>
+</section>

@@ -9,20 +9,7 @@
   </header>
 
   <div class="controls">
-    <div class="toggle" role="group" aria-label="Show impacts of">
-      @for (option of phases; track option) {
-        <button
-          type="button"
-          class="toggle__option"
-          [class.toggle__option--warm]="option === 'el-nino'"
-          [class.toggle__option--cool]="option === 'la-nina'"
-          [attr.aria-pressed]="phase() === option"
-          (click)="phase.set(option)"
-        >
-          {{ phaseName[option] }}
-        </button>
-      }
-    </div>
+    <el-phase-toggle [(phase)]="phase" label="Show impacts of" />
     <p class="controls__season el-kicker">Typical impacts · December–February</p>
   </div>
 

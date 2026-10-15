@@ -59,9 +59,102 @@ export interface SstAnomalyFile {
   values: (number | null)[][];
 }
 
+/* ---------- assets/data/nino12-index.json ----------
+   Same shape as nino34-index.json, for the Niño 1+2 region off coastal Peru
+   (0–10°S, 90°W–80°W). Parsed with parseNino34Index. */
+
+export type MonthlyIndexFile = Nino34IndexFile;
+
+/* ---------- assets/data/enso-episodes.json ---------- */
+
+export interface EnsoEpisodesFile {
+  source: string;
+  /** How episodes are detected: NOAA CPC's Oceanic Niño Index rule. */
+  definition: string;
+  /** Every El Niño and La Niña since 1950, in start order. */
+  episodes: EnsoEpisode[];
+  /** Months spent in each phase, per decade (the latest decade may be partial). */
+  decades: DecadePhaseCount[];
+}
+
+/**
+ * One episode. Magnitudes are measured in the episode's own direction, so a strong
+ * La Niña has a large positive `peak` just like a strong El Niño.
+ */
+export interface EnsoEpisode {
+  /** Display label: '1997–98', '2016', '1998–01'. Unique. */
+  id: string;
+  phase: EnsoPhase;
+  start: MonthKey;
+  end: MonthKey;
+  peakMonth: MonthKey;
+  /** Peak 3-month Niño 3.4 anomaly, °C. */
+  peak: number;
+  /** Length in months. */
+  months: number;
+  /** Peak 3-month Niño 1+2 (coastal Peru) anomaly, °C. Can be negative. */
+  nino12: number;
+  /** Peak 3-month Niño 4 (central Pacific) anomaly, °C. Can be negative. */
+  nino4: number;
+  /** Largest tropical Pacific area at least 1 °C anomalous, million km². */
+  area: number;
+  /** Peak tropical Indian Ocean anomaly up to 6 months after the episode, °C. Can be negative. */
+  indianOcean: number;
+}
+
+export interface DecadePhaseCount {
+  /** First year of the decade: 1950, 1960, … */
+  decade: number;
+  elNino: number;
+  laNina: number;
+  neutral: number;
+}
+
+/* ---------- assets/data/global-sst.json ---------- */
+
+export interface GlobalSstFile {
+  source: string;
+  baseline: string;
+  /** Complete calendar years, ascending. */
+  years: GlobalSstYear[];
+}
+
+export interface GlobalSstYear {
+  year: number;
+  /** Annual mean 60°S–60°N sea-surface temperature anomaly, °C. */
+  anomaly: number;
+  /** ENSO phase of the winter that opens the year (Dec–Feb, centred on January). */
+  phase: EnsoPhase | 'neutral';
+}
+
+/* ---------- assets/data/rainfall-winters.json ---------- */
+
+export interface RainfallFile {
+  source: string;
+  baseline: string;
+  season: 'DJF';
+  regions: { id: string; name: string }[];
+  /** Every December–February since 1979–80, ascending. */
+  winters: RainfallWinter[];
+}
+
+export interface RainfallWinter {
+  /** '1997–98' */
+  id: string;
+  phase: EnsoPhase | 'neutral';
+  /** Niño 3.4 3-month anomaly centred on January, °C. */
+  oni: number;
+  /** Rainfall anomaly as % of the 1991–2020 Dec–Feb normal, keyed by region id. */
+  anomalies: Record<string, number>;
+}
+
 /* ---------- URLs ---------- */
 
 export const NINO34_INDEX_URL = 'assets/data/nino34-index.json';
+export const NINO12_INDEX_URL = 'assets/data/nino12-index.json';
+export const ENSO_EPISODES_URL = 'assets/data/enso-episodes.json';
+export const GLOBAL_SST_URL = 'assets/data/global-sst.json';
+export const RAINFALL_URL = 'assets/data/rainfall-winters.json';
 
 export function sstAnomalyUrl(month: MonthKey): string {
   return `assets/data/sst-anomaly-${month.replace('-', '')}.json`;
@@ -130,6 +223,51 @@ function isMonotonic(values: unknown): values is number[] {
   return sign !== 0 && values.every((v, i) => i === 0 || Math.sign(v - values[i - 1]) === sign);
 }
 
+function isPhase(value: unknown, allowNeutral = false): boolean {
+  return value === 'el-nino' || value === 'la-nina' || (allowNeutral && value === 'neutral');
+}
+
+export function parseEnsoEpisodes(raw: unknown, url: string): EnsoEpisodesFile {
+  const fail = (problem: string): never => {
+    throw new Error(`${url}: ${problem}`);
+  };
+  const file = raw as EnsoEpisodesFile;
+  if (!file || !Array.isArray(file.episodes) || file.episodes.length === 0) fail('missing "episodes"');
+  for (const e of file.episodes) {
+    if (!e?.id || !isPhase(e.phase)) fail(`bad episode ${JSON.stringify(e)}`);
+    const numbers = [e.peak, e.months, e.nino12, e.nino4, e.area, e.indianOcean];
+    if (!numbers.every(Number.isFinite)) fail(`non-numeric field in episode ${e.id}`);
+  }
+  if (!Array.isArray(file.decades)) fail('missing "decades"');
+  return file;
+}
+
+export function parseGlobalSst(raw: unknown, url: string): GlobalSstFile {
+  const file = raw as GlobalSstFile;
+  const ok =
+    file &&
+    Array.isArray(file.years) &&
+    file.years.length > 1 &&
+    file.years.every((y) => Number.isInteger(y.year) && Number.isFinite(y.anomaly) && isPhase(y.phase, true));
+  if (!ok) throw new Error(`${url}: "years" must be [{ year, anomaly, phase }]`);
+  return file;
+}
+
+export function parseRainfall(raw: unknown, url: string): RainfallFile {
+  const fail = (problem: string): never => {
+    throw new Error(`${url}: ${problem}`);
+  };
+  const file = raw as RainfallFile;
+  if (!file || !Array.isArray(file.regions) || !Array.isArray(file.winters)) fail('missing "regions" or "winters"');
+  for (const w of file.winters) {
+    if (!w?.id || !isPhase(w.phase, true)) fail(`bad winter ${JSON.stringify(w)}`);
+    for (const r of file.regions) {
+      if (!Number.isFinite(w.anomalies?.[r.id])) fail(`winter ${w.id} lacks region ${r.id}`);
+    }
+  }
+  return file;
+}
+
 /* ---------- Month helpers ---------- */
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -151,7 +289,7 @@ export function formatMonth(month: MonthKey): string {
 }
 
 /** 2.41 → '+2.4 °C', −1.6 → '−1.6 °C' (true minus sign). */
-export function formatAnomaly(value: number, digits = 1, unit = ' °C'): string {
+export function formatAnomaly(value: number, digits = 1, unit = '\u00a0°C'): string {
   const sign = value > 0 ? '+' : value < 0 ? '−' : '';
   return `${sign}${Math.abs(value).toFixed(digits)}${unit}`;
 }

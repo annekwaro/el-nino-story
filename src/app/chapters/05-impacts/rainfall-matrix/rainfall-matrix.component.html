@@ -1,0 +1,67 @@
+<p class="swipe" aria-hidden="true">Swipe sideways to see every winter →</p>
+<div class="scroller" elReveal>
+  <table class="matrix" (pointerleave)="hover.set(null)">
+    <caption class="visually-hidden">
+      December–February rainfall, percent above or below the 1991–2020 normal, in
+      {{ phase() === 'el-nino' ? 'El Niño' : 'La Niña' }} winters since 1979–80
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col" class="matrix__corner"><span class="visually-hidden">Region</span></th>
+        @for (w of winters(); track w.id; let c = $index) {
+          <th scope="col" class="matrix__winter" [class.is-active]="hover()?.col === c">
+            <span>{{ w.id }}</span>
+          </th>
+        }
+        <th scope="col" class="matrix__summary">Typical</th>
+        <th scope="col" class="matrix__summary">As mapped</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows(); track row.id; let r = $index) {
+        <tr [class.is-active]="hover()?.row === r">
+          <th scope="row" class="matrix__region">{{ row.name }}</th>
+          @for (cell of row.cells; track cell.winter; let c = $index) {
+            <td
+              class="cell"
+              [class.cell--wet]="cell.wet"
+              [class.cell--dry]="!cell.wet"
+              [class.is-active]="hover()?.row === r && hover()?.col === c"
+              [style.--strength]="cell.strength + '%'"
+              [style.--i]="c"
+              (pointerenter)="hover.set({ row: r, col: c })"
+            >
+              <span class="visually-hidden">{{ format(cell.value) }}</span>
+            </td>
+          }
+          <td
+            class="cell cell--summary el-num"
+            [class.cell--wet]="row.mean >= 0"
+            [class.cell--dry]="row.mean < 0"
+            [style.--strength]="row.meanStrength + '%'"
+          >
+            {{ format(row.mean) }}
+          </td>
+          <td class="matrix__hits el-num">
+            @if (row.expect) {
+              <span [class.is-strong]="row.hits / row.cells.length >= 0.75">{{ row.hits }}/{{ row.cells.length }}</span>
+              <span class="matrix__expect">{{ row.expect }}</span>
+            } @else {
+              <span class="matrix__none">—</span>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<div class="foot">
+  <p class="readout el-num" aria-live="polite">{{ readout() ?? 'Hover a square to read it.' }}</p>
+  <p class="scale" aria-hidden="true">
+    <span>Drier</span>
+    <span class="scale__ramp"></span>
+    <span>Wetter</span>
+    <span class="scale__note">±75% of normal and beyond</span>
+  </p>
+</div>

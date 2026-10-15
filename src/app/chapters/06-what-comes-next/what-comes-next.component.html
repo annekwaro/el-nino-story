@@ -1,0 +1,154 @@
+<section class="chapter" id="chapter-06" aria-labelledby="chapter-06-title">
+  <header class="chapter__intro">
+    <p class="el-kicker"><span class="el-num">06</span> / Outlook</p>
+    <h2 class="chapter__title" id="chapter-06-title">What comes next</h2>
+    <p class="chapter__dek">
+      El Niño isn't going anywhere. But the ocean it sloshes across is not the ocean of 1950.
+    </p>
+  </header>
+
+  <!-- 1 · How often -->
+  <article class="part" aria-labelledby="ch6-often">
+    <div class="part__text">
+      <p class="part__kicker el-kicker">The rhythm</p>
+      <h3 class="part__title" id="ch6-often">A Pacific that rarely sits still</h3>
+      @if (shares(); as s) {
+        <p>
+          Since 1950 the tropical Pacific has spent
+          <strong class="el-num warm">{{ s.elNino }}%</strong> of months in El Niño and
+          <strong class="el-num cool">{{ s.laNina }}%</strong> in La Niña, and only
+          <strong class="el-num">{{ s.neutral }}%</strong> truly neutral. The swings come in
+          clusters: the {{ s.latestDecade }} so far have been
+          <strong class="el-num cool">{{ s.latestLaNina }}%</strong> La Niña.
+        </p>
+      }
+    </div>
+
+    @if (data.episodes.value(); as file) {
+      <el-decade-stack [decades]="file.decades" [through]="through()" />
+    } @else {
+      <div class="placeholder">
+        @if (data.episodes.error(); as error) {
+          <p>Episode data not available.<br /><code>{{ errorText(error) }}</code></p>
+        } @else {
+          <p>Loading…</p>
+        }
+      </div>
+    }
+  </article>
+
+  <!-- 2 · Rising floor -->
+  <article class="part" aria-labelledby="ch6-floor">
+    <div class="part__text">
+      <p class="part__kicker el-kicker">A rising floor</p>
+      <h3 class="part__title" id="ch6-floor">Every El Niño now lands on a warmer ocean</h3>
+      @if (warming(); as w) {
+        <p>
+          Between 60°S and 60°N the sea surface has warmed about
+          <strong class="el-num warm">{{ w.total }}</strong> since {{ w.first }}, roughly
+          <strong class="el-num">{{ w.perDecade }}</strong> a decade. ENSO rides on top of that trend.
+          Measured from the trend line, years that open in El Niño average
+          <strong class="el-num warm">{{ w.elNino }}</strong> and years that open in La Niña
+          <strong class="el-num cool">{{ w.laNina }}</strong>.
+        </p>
+        <p>
+          That is where the records come from. Of the {{ w.records }} years since 1980 that beat every
+          year before them, <strong class="el-num warm">{{ w.recordsElNino }}</strong> opened in El Niño@if (w.building) {, and {{ w.building }} warmed as one was building}.
+          The warmest so far is <strong class="el-num warm">{{ w.warmest }}</strong>, at
+          <strong class="el-num warm">{{ w.warmestValue }}</strong>.
+        </p>
+      }
+    </div>
+
+    @if (data.globalSst.value(); as file) {
+      <figure class="figure">
+        <el-global-sst-chart [years]="file.years" />
+        <figcaption class="figure__caption">
+          <span class="key"><span class="key__swatch key__swatch--warm"></span>Year opens in El Niño</span>
+          <span class="key"><span class="key__swatch key__swatch--neutral"></span>Neutral</span>
+          <span class="key"><span class="key__swatch key__swatch--cool"></span>La Niña</span>
+          <span class="key"><span class="key__line"></span>Linear trend</span>
+          <span class="figure__note">Annual sea-surface temperature, 60°S–60°N, against 1991–2020.</span>
+        </figcaption>
+      </figure>
+    } @else {
+      <div class="placeholder">
+        @if (data.globalSst.error(); as error) {
+          <p>Global temperature data not available.<br /><code>{{ errorText(error) }}</code></p>
+        } @else {
+          <p>Loading…</p>
+        }
+      </div>
+    }
+  </article>
+
+  <!-- 3 · Outlook -->
+  <article class="outlook" aria-labelledby="ch6-outlook" elReveal>
+    <p class="part__kicker el-kicker">The next one</p>
+    <h3 class="outlook__title" id="ch6-outlook">It will come back. What it brings is changing.</h3>
+
+    <ol class="findings">
+      <li class="finding">
+        <span class="finding__mark el-num">01</span>
+        <p>
+          <strong>ENSO stays in charge.</strong> It will very likely remain the dominant swing in the
+          world's year-to-year climate through this century.
+        </p>
+      </li>
+      <li class="finding">
+        <span class="finding__mark el-num">02</span>
+        <p>
+          <strong>The rain swings grow.</strong> The floods and droughts tied to El Niño and La Niña are
+          very likely to intensify by the second half of the century, whether or not the ocean swings
+          themselves get bigger.
+        </p>
+      </li>
+      <li class="finding">
+        <span class="finding__mark el-num">03</span>
+        <p>
+          <strong>The floor keeps rising.</strong> As long as the ocean warms, each El Niño adds its
+          heat to a higher starting point, and the records it helps set keep climbing.
+        </p>
+      </li>
+    </ol>
+
+    <p class="outlook__source">
+      Findings 01 and 02 summarise the IPCC Sixth Assessment Report, Working Group I (2021).
+      Finding 03 follows from the record above.
+    </p>
+
+    <p class="outlook__close">
+      The Pacific will turn warm again. Watching for it, and knowing what it tends to bring and to
+      whom, is the most useful long-range forecast we have.
+    </p>
+
+    <a class="outlook__top" href="#top">Back to the beginning ↑</a>
+  </article>
+
+  <!-- Methods -->
+  <details class="methods">
+    <summary>How these charts were made</summary>
+    <ul>
+      <li>
+        Sea temperatures: NOAA ERSST v5, monthly, 2° grid. Anomalies against 1991–2020 unless noted.
+      </li>
+      <li>
+        El Niño and La Niña episodes follow NOAA CPC's Oceanic Niño Index rule: a 3-month mean of the
+        Niño 3.4 anomaly at or beyond ±0.5 °C for at least five months, against 30-year base periods
+        re-centred every five years so that long-term warming isn't mistaken for El Niño.
+      </li>
+      <li>
+        Rainfall: NOAA GPCP v2.3, monthly, 2.5° grid, Dec–Feb averages over each region, as a percent
+        of the 1991–2020 normal.
+      </li>
+      <li>
+        Episode fingerprints: peak 3-month Niño 3.4, Niño 1+2 and Niño 4 anomalies; tropical Pacific
+        area at least 1 °C anomalous; tropical Indian Ocean anomaly up to six months after each episode.
+      </li>
+      <li>Impact regions in chapter 4 are simplified from NOAA CPC's ENSO impact maps.</li>
+      <li>
+        All figures are computed by <code>scripts/preprocess.py</code> in this project's repository.
+      </li>
+    </ul>
+  </details>
+</section>

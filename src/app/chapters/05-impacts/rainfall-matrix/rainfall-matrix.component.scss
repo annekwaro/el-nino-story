@@ -1,0 +1,216 @@
+:host {
+  display: block;
+  min-width: 0;
+
+  --wet: var(--el-water);
+  --dry: color-mix(in srgb, var(--el-accent-warm) 55%, var(--el-ink-muted));
+  --cell: 1.6rem;
+}
+
+.scroller {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.matrix {
+  border-collapse: separate;
+  border-spacing: 2px;
+  font-size: var(--el-text-xs);
+}
+
+.matrix__corner,
+.matrix__region {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--el-bg);
+}
+
+.matrix__region {
+  min-width: 11rem;
+  max-width: 13rem;
+  padding-right: var(--el-space-3);
+  font-family: var(--el-font-display);
+  font-size: var(--el-text-sm);
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: left;
+  color: var(--el-ink-muted);
+  transition: color var(--el-duration-fast) var(--el-ease-out);
+
+  .is-active & {
+    color: var(--el-ink);
+  }
+}
+
+/* Winter labels read upward to keep columns narrow. */
+.matrix__winter {
+  height: 4.25rem;
+  padding: 0 0 var(--el-space-1);
+  vertical-align: bottom;
+  font-family: var(--el-font-mono);
+  font-weight: 400;
+  color: var(--el-ink-muted);
+
+  span {
+    display: inline-block;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+  }
+
+  &.is-active {
+    color: var(--el-ink);
+    font-weight: 600;
+  }
+}
+
+.matrix__summary {
+  padding: 0 var(--el-space-2) var(--el-space-1);
+  vertical-align: bottom;
+  font-family: var(--el-font-display);
+  font-weight: 600;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--el-ink);
+}
+
+.cell {
+  --tint: var(--wet);
+
+  width: var(--cell);
+  min-width: var(--cell);
+  height: var(--cell);
+  padding: 0;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--tint) var(--strength), var(--el-bg));
+  box-shadow: inset 0 0 0 1px var(--el-rule);
+  cursor: crosshair;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity var(--el-duration-base) var(--el-ease-out),
+    transform var(--el-duration-base) var(--el-ease-out);
+
+  .is-revealed & {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(var(--i, 0) * 25ms);
+  }
+
+  &.is-active {
+    box-shadow: inset 0 0 0 2px var(--el-ink);
+  }
+}
+
+.cell--dry {
+  --tint: var(--dry);
+}
+
+.cell--summary {
+  width: auto;
+  padding: 0 var(--el-space-2);
+  font-size: var(--el-text-xs);
+  font-weight: 600;
+  text-align: center;
+  cursor: default;
+}
+
+.matrix__hits {
+  padding-left: var(--el-space-2);
+  white-space: nowrap;
+  color: var(--el-ink-muted);
+
+  .is-strong {
+    font-weight: 700;
+    color: var(--el-ink);
+  }
+}
+
+.matrix__expect {
+  margin-left: 0.35rem;
+  font-family: var(--el-font-body);
+  font-size: var(--el-text-xs);
+}
+
+.matrix__none {
+  color: var(--el-rule);
+}
+
+/* ---------- Readout + scale ---------- */
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--el-space-2) var(--el-space-4);
+  margin-top: var(--el-space-3);
+  font-size: var(--el-text-xs);
+  color: var(--el-ink-muted);
+
+  p {
+    margin: 0;
+  }
+}
+
+.readout {
+  min-height: 1.4em;
+  color: var(--el-ink);
+}
+
+.scale {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--el-space-2);
+}
+
+.scale__ramp {
+  width: 7rem;
+  height: 0.5rem;
+  border-radius: 1px;
+  background: linear-gradient(to right, var(--dry), var(--el-bg), var(--wet));
+  box-shadow: inset 0 0 0 1px var(--el-rule);
+}
+
+.scale__note {
+  margin-left: var(--el-space-2);
+}
+
+/* Phones: tighter names and cells so more winters fit before scrolling. */
+.swipe {
+  display: none;
+  margin: 0 0 var(--el-space-2);
+  font-size: var(--el-text-xs);
+  color: var(--el-ink-muted);
+}
+
+@media (max-width: 599.98px) {
+  :host {
+    --cell: 1.35rem;
+  }
+
+  .matrix__region {
+    min-width: 7.25rem;
+    max-width: 7.25rem;
+    padding-right: var(--el-space-2);
+    font-size: var(--el-text-xs);
+  }
+
+  .swipe {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .is-revealed .cell {
+    transition-delay: 0s;
+  }
+}

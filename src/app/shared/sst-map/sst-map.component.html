@@ -39,19 +39,21 @@
     }
   </div>
 
-  <div class="map__axis" aria-hidden="true">
-    @for (tick of lonTicks(); track tick.lon) {
-      <span class="map__lon" [style.left.%]="tick.left">{{ tick.label }}</span>
-    }
-  </div>
+  @if (!bare()) {
+    <div class="map__axis" aria-hidden="true">
+      @for (tick of lonTicks(); track tick.lon) {
+        <span class="map__lon" [style.left.%]="tick.left">{{ tick.label }}</span>
+      }
+    </div>
 
-  <figcaption class="map__caption">
-    <span>{{ caption() }}</span>
-    <span class="map__legend">
-      <span class="visually-hidden">Colour scale:</span>
-      <span class="el-num">−{{ limit() }}</span>
-      <span class="map__ramp" aria-hidden="true"></span>
-      <span class="el-num">+{{ limit() }} °C</span>
-    </span>
-  </figcaption>
+    <figcaption class="map__caption">
+      <span>{{ caption() }}</span>
+      <span class="map__legend">
+        <span class="visually-hidden">Colour scale:</span>
+        <span class="el-num">−{{ limit() }}</span>
+        <span class="map__ramp" aria-hidden="true"></span>
+        <span class="el-num">+{{ limit() }} °C</span>
+      </span>
+    </figcaption>
+  }
 </figure>

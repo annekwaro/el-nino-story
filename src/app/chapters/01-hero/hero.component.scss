@@ -40,6 +40,136 @@
   animation: rise var(--el-duration-slow) var(--el-ease-out) 150ms both;
 }
 
+/* ---------- SST frames ---------- */
+
+.hero__figure {
+  width: min(100%, 48rem);
+  margin: var(--el-space-5) auto 0;
+  animation: fade var(--el-duration-slow) ease 400ms both;
+}
+
+/* Frames stack in one cell and crossfade. */
+.hero__maps {
+  display: grid;
+  aspect-ratio: 170 / 60;
+  border-radius: 3px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--el-accent-neutral) 12%, var(--el-bg));
+  box-shadow:
+    0 1px 0 var(--el-rule),
+    0 24px 48px -32px color-mix(in srgb, var(--el-accent-cool) 45%, transparent);
+}
+
+.hero__map {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transition: opacity 1.2s var(--el-ease-out);
+
+  &.is-active {
+    opacity: 1;
+  }
+}
+
+.hero__caption {
+  margin-top: var(--el-space-3);
+}
+
+.hero__frames {
+  display: flex;
+  justify-content: center;
+  gap: var(--el-space-2);
+}
+
+.hero__frame {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--el-space-2) var(--el-space-3);
+  border: 0;
+  border-top: 2px solid var(--el-rule);
+  background: transparent;
+  color: var(--el-ink-muted);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--el-duration-base) var(--el-ease-out),
+    color var(--el-duration-base) var(--el-ease-out);
+
+  &:hover {
+    color: var(--el-ink);
+  }
+
+  &[aria-pressed='true'] {
+    border-top-color: var(--el-ink);
+    color: var(--el-ink);
+  }
+
+  &--warm[aria-pressed='true'] {
+    border-top-color: var(--el-accent-warm);
+  }
+
+  &--cool[aria-pressed='true'] {
+    border-top-color: var(--el-accent-cool);
+  }
+}
+
+.hero__frame-month {
+  font-size: var(--el-text-xs);
+}
+
+.hero__frame-phase {
+  font-family: var(--el-font-display);
+  font-size: var(--el-text-sm);
+  font-weight: 600;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--el-space-2) var(--el-space-4);
+  margin-top: var(--el-space-2);
+  font-size: var(--el-text-xs);
+  color: var(--el-ink-muted);
+}
+
+.hero__play {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--el-ink);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.hero__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--el-space-2);
+}
+
+.hero__ramp {
+  width: 5rem;
+  height: 0.4rem;
+  border-radius: 1px;
+  background: linear-gradient(to right, var(--el-accent-cool), var(--el-bg), var(--el-accent-warm));
+  box-shadow: inset 0 0 0 1px var(--el-rule);
+}
+
+@media (max-width: 479.98px) {
+  .hero__source {
+    flex-basis: 100%;
+  }
+}
+
 .hero__cue {
   position: absolute;
   bottom: var(--el-space-5);
@@ -98,5 +228,10 @@
     animation: none;
     transform: none;
     opacity: 0.35;
+  }
+
+  .hero__map,
+  .hero__frame {
+    transition: none;
   }
 }

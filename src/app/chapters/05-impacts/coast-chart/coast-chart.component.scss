@@ -1,0 +1,122 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.chart {
+  display: block;
+  overflow: visible;
+  touch-action: pan-y;
+}
+
+.stop-warm {
+  stop-color: var(--el-accent-warm);
+}
+
+.stop-warm-fade {
+  stop-color: var(--el-accent-warm);
+  stop-opacity: 0.35;
+}
+
+.stop-cool {
+  stop-color: var(--el-accent-cool);
+}
+
+.stop-cool-fade {
+  stop-color: var(--el-accent-cool);
+  stop-opacity: 0.35;
+}
+
+.area--warm {
+  fill: url(#coast-warm);
+}
+
+.area--cool {
+  fill: url(#coast-cool);
+}
+
+/* The record draws in from left to right on first view. */
+.plot {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.6s var(--el-ease-out);
+
+  .is-revealed & {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.grid {
+  stroke: var(--el-rule);
+}
+
+.zero {
+  stroke: var(--el-ink);
+  stroke-opacity: 0.45;
+}
+
+.axis-label {
+  font-family: var(--el-font-mono);
+  font-size: var(--el-text-xs);
+  fill: var(--el-ink-muted);
+}
+
+.peak {
+  opacity: 0;
+  transition: opacity var(--el-duration-slow) var(--el-ease-out) 1.2s;
+
+  .is-revealed & {
+    opacity: 1;
+  }
+
+  circle {
+    fill: var(--el-ink);
+  }
+
+  text {
+    font-family: var(--el-font-mono);
+    font-size: var(--el-text-xs);
+    font-weight: 600;
+    fill: var(--el-ink);
+    paint-order: stroke;
+    stroke: var(--el-bg);
+    stroke-width: 3px;
+  }
+}
+
+.hover {
+  pointer-events: none;
+
+  line {
+    stroke: var(--el-ink);
+    stroke-dasharray: 2 3;
+  }
+
+  circle {
+    fill: var(--el-accent-cool);
+    stroke: var(--el-bg);
+    stroke-width: 2;
+
+    &.is-warm {
+      fill: var(--el-accent-warm);
+    }
+  }
+
+  text {
+    font-family: var(--el-font-mono);
+    font-size: var(--el-text-xs);
+    font-weight: 600;
+    fill: var(--el-ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plot {
+    clip-path: none;
+    transition: none;
+  }
+
+  .peak {
+    opacity: 1;
+    transition: none;
+  }
+}

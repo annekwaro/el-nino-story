@@ -50,17 +50,31 @@ interface Credit {
   `,
 })
 export class SiteFooterComponent {
-  // Placeholder list — confirm against the datasets actually used before publishing.
   readonly credits: Credit[] = [
-    {
-      name: 'Oceanic Niño Index (ONI)',
-      org: 'NOAA Climate Prediction Center',
-      url: 'https://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php',
-    },
     {
       name: 'Extended Reconstructed SST v5',
       org: 'NOAA NCEI',
       url: 'https://www.ncei.noaa.gov/products/extended-reconstructed-sst',
+    },
+    {
+      name: 'GPCP v2.3 monthly precipitation',
+      org: 'NOAA PSL',
+      url: 'https://psl.noaa.gov/data/gridded/data.gpcp.html',
+    },
+    {
+      name: 'Oceanic Niño Index method and ENSO impact maps',
+      org: 'NOAA Climate Prediction Center',
+      url: 'https://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php',
+    },
+    {
+      name: 'Sixth Assessment Report, Working Group I',
+      org: 'IPCC',
+      url: 'https://www.ipcc.ch/report/ar6/wg1/',
+    },
+    {
+      name: 'Land outlines',
+      org: 'Natural Earth, via world-atlas',
+      url: 'https://www.naturalearthdata.com/',
     },
   ];
 }
