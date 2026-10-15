@@ -30,7 +30,6 @@ export const REGIONS = {
     radii: [20, 12],
   },
   'central-pacific': { name: 'Central equatorial Pacific', center: [178, 0], radii: [14, 5] },
-  'pacific-northwest': { name: 'Pacific Northwest', center: [-121, 46], radii: [5, 4] },
   canada: { name: 'Western Canada and the northern US', center: [-112, 55], radii: [20, 6] },
   'southern-us': { name: 'Southern US and northern Mexico', center: [-97, 30], radii: [16, 5.5] },
   'ecuador-peru': { name: 'Coastal Ecuador and northern Peru', center: [-80, -4], radii: [3.5, 5] },
@@ -101,11 +100,6 @@ export const IMPACTS: Record<EnsoPhase, readonly Impact[]> = {
       region: 'central-pacific',
       effect: 'drier',
       text: 'Cooler water suppresses storms over the central Pacific.',
-    },
-    {
-      region: 'pacific-northwest',
-      effect: 'wetter',
-      text: 'Storms arrive wetter, with heavier mountain snow.',
     },
     {
       region: 'canada',

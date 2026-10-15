@@ -42,7 +42,7 @@ export const TIMELINE: readonly TimelineEvent[] = [
   {
     years: '2015–16',
     phase: 'el-nino',
-    title: 'Strongest since 1997',
+    title: 'A rival to 1997',
     text: 'Marine heat bleaches the Great Barrier Reef on a scale never seen before, and 2016 becomes the hottest year yet recorded.',
   },
   {
